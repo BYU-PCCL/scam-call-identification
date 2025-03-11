@@ -9,10 +9,10 @@ client = genai.Client(api_key=key)
 
 response = client.models.generate_content(
     model="gemini-2.0-flash",
-    contents="What behaviors are most useful to analyze for when classifying phone call scams?",
+    contents="what fruits are most similar to pineapples",
 )
 
-output_file = "./outputs/gemini_output.txt"
+output_file = "./outputs/gemini_test_output.txt"
 
 f = open(output_file, "w")
 f.write(response.text)

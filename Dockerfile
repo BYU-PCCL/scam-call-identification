@@ -24,11 +24,12 @@ RUN echo "conda activate scams_env" >> ~/.bashrc
 #install dependencies
 RUN pip install scikit-learn \
     && pip install pandas \
-    && pip install numpy
+    && pip install numpy \
+    && pip install -U google-genai
 
 #other
 SHELL ["/bin/bash", "-c"]
 
 RUN echo "alias ls='ls --color=auto'" >> ~/.bashrc
 
-CMD ["bash"]
+CMD ["/bin/bash", "--login", "-c", "conda activate scams_env && /bin/bash"]
