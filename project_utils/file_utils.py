@@ -61,6 +61,12 @@ def find_file_by_words(words):
 def get_gemini_key_path():
     return find_file_by_words(["gemini", "key"])
 
+def get_gemini_api_key():
+    f = open(get_gemini_key_path(), "r")
+    key = f.read()
+    f.close()
+    return key
+
 
 if __name__ == "__main__":
     print("Testing find_repo_root")
@@ -68,6 +74,10 @@ if __name__ == "__main__":
     print("-")
     print("Testing find_file_by_words with params: [gemini,key]")
     print(find_file_by_words(["gemini", "key"]))
+    print("-")
     print("Testing get_gemini_key_path:")
     print("(note that it will only work if the fileanme contains the words \"gemini\" and \"key\")")
     print(get_gemini_key_path())
+    print("-")
+    print("Testing get_gemini_api_key:")
+    print(get_gemini_api_key())
