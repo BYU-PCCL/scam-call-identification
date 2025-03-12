@@ -24,5 +24,5 @@ for index, row in conversations_small.iterrows():
     output_file = "./outputs/feature_extraction_text_out.txt"
 
     with open(output_file, "a") as file:
-        file.write(row['TEXT'] + "\n\n\n")
+        file.write('\n\n' + row['TEXT'] + "\n\n")
         file.write(response.text)
