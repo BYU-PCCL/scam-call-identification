@@ -27,6 +27,8 @@ RUN pip install scikit-learn \
     && pip install numpy \
     && pip install -U google-genai
 
+RUN git config --global --add safe.directory /app/scam-call-identification
+
 #other
 SHELL ["/bin/bash", "-c"]
 
