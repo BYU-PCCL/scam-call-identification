@@ -252,6 +252,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 
 Again, for each of the lines (instance of a speaker's words) in the transcript, you will produce this structure, and this list of jsons will be elements in an outer json list, which will be the structure I will end up writing to a json file, so it should be valid json.
 
+At the very end, 
 
 Important Considerations:
 
