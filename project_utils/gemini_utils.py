@@ -1,9 +1,8 @@
 from google import genai
+from file_utils import get_gemini_api_key
 
 #run this file from the base of the repository
-f = open("../api_keys/gemini_key.txt", "r")
-key = f.read()
-f.close()
+key = get_gemini_api_key()
 
 client = genai.Client(api_key=key)
 

@@ -1,9 +1,8 @@
 from google import genai
 import pandas as pd
+from file_utils import get_gemini_api_key
 
-with open("../api_keys/gemini_key.txt", "r") as file:
-    key = file.read()
-client = genai.Client(api_key=key)
+client = genai.Client(api_key=get_gemini_api_key())
 
 with open("./data/gemini_prompt_edit.txt", "r") as file:
     system_prompt = file.read()
