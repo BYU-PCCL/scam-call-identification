@@ -10,7 +10,7 @@ with open("./data/gemini_prompt_edit.txt", "r") as file:
 
 
 conversations = pd.read_csv('./data/call_data_by_conversation.csv')
-conversations_small = conversations[:5]
+conversations_small = conversations[6:10]
 
 for index, row in conversations_small.iterrows():
 
