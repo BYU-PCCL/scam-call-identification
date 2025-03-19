@@ -64,7 +64,9 @@ Step-by-step instructions:
 
 2. Detect behaviors: Carefully analyze the chunk's content and look for each of the behaviors listed above. If a behavior is present in the chunk, include the behavior's ID in your output.
 
-3. Output your response: Format your response in JSON according to this schema:
+3. Output your response: Format your response in JSON according to the following schema. Include " ```json``` " markings around the json blocks
+
+json schema:
 {
 "caller_transcript": "caller speech" or null if not present in current chunk,
 "caller_name": "String" or null if unknown,
@@ -75,7 +77,6 @@ Step-by-step instructions:
 "recipient_sentiment": "String (e.g., worried)",
 "recipient_behaviors_detected": "Comma separated list of IDs" or null,
 }
-
 
 Important Considerations:
 
