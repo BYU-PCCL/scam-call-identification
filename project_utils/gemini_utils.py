@@ -1,5 +1,7 @@
 from google import genai
 from file_utils import get_gemini_api_key
+from dotenv import load_dotenv
+
 
 #run this file from the base of the repository
 key = get_gemini_api_key()

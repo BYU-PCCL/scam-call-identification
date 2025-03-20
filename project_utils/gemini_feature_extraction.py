@@ -9,13 +9,7 @@ def run_gemini_behavioral_analysis(
     response_writepath="./outputs/feature_extraction_out.txt"
     ):
 
-    key = None
-    if os.path.exists("../api_keys/gemini_key.txt")
-        with open("../api_keys/gemini_key.txt", 'r') as file:
-            key = file.read()
-    else:
-        key = get_gemini_api_key()
-    client = genai.Client(api_key=key)
+    key = get_gemini_api_key() # Gets api key from .env file
 
     with open(prompt_filepath, "r") as file: #"./data/gemini_prompt_edit.txt"
         system_prompt = file.read()

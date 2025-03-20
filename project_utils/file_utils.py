@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 def find_repo_root():
     """
@@ -58,14 +59,65 @@ def find_file_by_words(words):
     else:
         return matches[0]
 
-def get_gemini_key_path():
-    return find_file_by_words(["gemini", "key"])
+def find_file_path_by_words(words_list):
+    return find_file_by_words(words_list)
 
 def get_gemini_api_key():
-    f = open(get_gemini_key_path(), "r")
-    key = f.read()
-    f.close()
-    return key
+    load_dotenv()
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if not gemini_key:
+        raise ValueError("Please set the OPENAI_API_KEY environment variable")
+
+def get_chatgpt_api_key():
+    load_dotenv()
+    openai_key = None
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if not openai_key or openai_key == "":
+        raise ValueError("Please set the OPENAI_API_KEY environment variable")
+    return openai_key
+
+class WarningTracker:
+    _instance = None  # holds single instance
+    _warning_given = False  # Tracks whether the warning has been given
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(WarningTracker, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def check_and_warn(self):
+        """
+        Checks if the warning has already been given. If not, prints the warning
+        and marks it as given.
+        """
+        if not self._warning_given:
+            print("\ncout_logGING SET TO TRUE BY DEFAULT")
+            print("If you would like to turn off cout_logging, create an environment variable with id \"cout_log\" and set it to \"False\"")
+            print("\n-\n")
+            self._warning_given = True
+
+def cout_logging_enabled():
+    load_dotenv()
+    cout_logging_preference = os.getenv("cout_log")
+    
+    # Get the singleton instance of WarningTracker
+    warning_tracker = WarningTracker()
+
+    if not cout_logging_preference or cout_logging_preference is None:
+        # Check and warn only if warning hasn't been given
+        warning_tracker.check_and_warn()
+        return True  # Default cout_logging enabled is true
+
+    if cout_logging_preference.lower() != "true" and cout_logging_preference.lower() != "false":
+        raise ValueError("Please set environment variable with id \"cout_log\" to \"True\" or \"False\"")
+
+    if cout_logging_preference.lower() == "true":
+        return True
+
+    if cout_logging_preference.lower() == "false":
+        return False
+
+    raise ValueError("Critical Error: .env Variable \"cout_log\" exists, but was assigned a value which the function did not account for.")
 
 
 if __name__ == "__main__":
