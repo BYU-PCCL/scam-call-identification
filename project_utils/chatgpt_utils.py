@@ -193,6 +193,72 @@ def continue_conversation(progress_message, conversation, prompt, model="gpt-4o-
     
     return conversation
 
+
+def build_progress_message(end_transcript_index, n_transcripts, transcript_index):
+    if end_transcript_index is not None and end_transcript_index < n_transcripts:
+        extra = f", configured to stop after call transcript {end_transcript_index}"
+    else:
+        extra = ""
+    progress_cout_output_message = (
+        f"Call Transcript {transcript_index + 1}/{n_transcripts}" + extra
+    )
+    return progress_cout_output_message
+
+
+def get_response_from_chatgpt_conversation(chatgpt_conversation):
+    response_text = chatgpt_conversation[-1]["content"]
+    return response_text
+
+
+def get_n_lines_for_progress_msg(response_text):
+    if "Number of Lines in Cleaned Transcript in Total:" in response_text:
+        # using prompt which asks ChatGPT to list n lines in cleaned transcript
+        response_text_has_asterisks = response_text[-1] == '*'
+        int_str = response_text.split("Number of Lines in Cleaned Transcript in Total: ")[1]
+        if response_text_has_asterisks:
+            # remove last 2 chars, as they are asterisks
+            int_str = int_str[:-2]
+        if int_str[-1] == '.':
+            int_str = int_str[:-1]
+        n_lines_in_cleaned_transcript = int(int_str)
+        n_lines_left_to_process = n_lines_in_cleaned_transcript - 1  # subtract 1 since the first line was handled
+        n_lines_left_was_estimated_for_progress_msg = False
+    else:
+        # prompt doesn't explicitly ask ChatGPT to list num lines in cleaned transcript, assume it can't be more than 1.5 times 
+        # the number of lines in the subset_of_data_append_to_prompt (the raw transcript)
+        # If the response stops including additional json, the loop will stop asking ChatGPT to produce json for additional
+        # transcript lines, this is just here just in case that doesn't happen to prevent an infinite loop.
+        n_lines_in_raw_transcript = len(current_transcript_text.split('\n')) + 1
+        n_lines_left_to_process = int(n_lines_in_raw_transcript * 1.5)
+        n_lines_left_was_estimated_for_progress_msg = True
+    
+    return n_lines_left_to_process, n_lines_left_was_estimated_for_progress_msg
+
+
+def get_json_from_chatgpt_response(response_text):
+    if "```json" not in response_text:
+            raise ValueError("Critical Error: Could not locate ```json in the response, meaning the response likely contains no valid json. Terminating.")
+    # Extract the JSON portion.
+    try:
+        json_and_rest = response_text.split("```json\n")[1]
+        json_only = json_and_rest.split("\n```")[0]
+    except IndexError:
+        if len(response) < 100 and ('done' in response or 'Done' in response):
+            print("WARNING - ChatGPT indicated it was done after only one line. This is fine so long as the current transcript is only one line, but please double check.")
+
+            cont = input("Continue (y/n)?")
+
+            if cont != "Y" and cont != "Y":
+                return
+            
+            print("ChatGPT indicated it was done processing the transcript. Moving to the next transcript.")
+            continue
+        raise ValueError("Critical Error: JSON delimiters not found as expected in the response.")
+    if not is_json(json_only):
+            raise ValueError("Critical Error: JSON not parsed correctly from ChatGPT response. Terminating.")
+    return json_only
+
+
 # Example usage:
 if __name__ == "__main__":
     # Start a new conversation.
