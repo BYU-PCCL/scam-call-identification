@@ -1,6 +1,13 @@
 import os
 from dotenv import load_dotenv
 
+
+def read_file(filepath):
+    with open(main_prompt_filepath, "r") as file:
+        file_contents = file.read()
+    return file_contents
+
+
 def find_repo_root():
     """
     Determine the repository root by trying two approaches:
