@@ -229,6 +229,7 @@ def make_dir_rec(path):
     """
     # Normalize path for the system
     path = os.path.normpath(path)
+    path = os.path.dirname(path) # only make folders
     
     # Build path folder-by-folder
     current_path = ""
