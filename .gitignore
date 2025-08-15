@@ -13,3 +13,6 @@ src/ml_scam_detector/data/**
 
 # Unignore any "info.txt" files anywhere inside myfolder
 !src/ml_scam_detector/data/**/info.txt
+
+# Ignore project structure folder, used to cat all files and file structure
+project_structure
