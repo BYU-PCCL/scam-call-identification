@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 from dotenv import load_dotenv
 from openai import OpenAI
 from src.ml_scam_detector.utils.file_utils import get_chatgpt_api_key
@@ -226,7 +227,9 @@ def get_n_lines_for_progress_msg(response_text):
         # the number of lines in the subset_of_data_append_to_prompt (the raw transcript)
         # If the response stops including additional json, the loop will stop asking ChatGPT to produce json for additional
         # transcript lines, this is just here just in case that doesn't happen to prevent an infinite loop.
-        n_lines_in_raw_transcript = len(current_transcript_text.split('\n')) + 1
+        raise Exception("Haven't handled this part yet... need a way to estimate transcript length here, don't have it yet...")
+        placeholder=response_text
+        n_lines_in_raw_transcript = len(placeholder.split('\n')) + 1
         n_lines_left_to_process = int(n_lines_in_raw_transcript * 1.5)
         n_lines_left_was_estimated_for_progress_msg = True
     

@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from src.ml_scam_detector.project_utils.file_utils import cout_logging_enabled
+from src.ml_scam_detector.utils.file_utils import cout_logging_enabled
 import inspect
 
 def cout_log(cout_log_str, force=False):
