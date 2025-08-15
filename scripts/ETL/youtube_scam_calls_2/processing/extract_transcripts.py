@@ -8,9 +8,9 @@ from src.general_file_utils.utils.csv_utils import append_df_rows_to_csv
 
 if __name__ == "__main__":
     # write transcript data to destination
-    youtube_scam_calls_2 = "src\\ml_scam_detector\\data\\youtube_scam_calls_2"
+    youtube_scam_calls_2 = "src\\ml_scam_classification\\data\\youtube_scam_calls_2"
     DEFAULT_DATA_PATH = os.path.join(youtube_scam_calls_2, "raw_data\\data.csv")
-    DEFAULT_WRITE_PATH = "src\\ml_scam_detector\\data\\youtube_scam_calls_2\\processed"
+    DEFAULT_WRITE_PATH = "src\\ml_scam_classification\\data\\youtube_scam_calls_2\\processed"
 
     assert_path_exists(DEFAULT_DATA_PATH)
 
@@ -22,10 +22,10 @@ if __name__ == "__main__":
     # create destination
     full_destination_path = os.path.join(DEFAULT_WRITE_PATH, "transcripts.csv")
     # TODO REMOVE following line once works and leave space
-    assert full_destination_path == "src\\ml_scam_detector\\data\\youtube_scam_calls_2\\processed\\transcripts.csv"
+    assert full_destination_path == "src\\ml_scam_classification\\data\\youtube_scam_calls_2\\processed\\transcripts.csv"
     if not os.path.exists(DEFAULT_WRITE_PATH):
         os.makedirs(DEFAULT_WRITE_PATH)
-    assert_path_exists(os.path.join("src\\ml_scam_detector\\data\\youtube_scam_calls_2\\processed"))
+    assert_path_exists(os.path.join("src\\ml_scam_classification\\data\\youtube_scam_calls_2\\processed"))
 
     # if path already existed with a csv, make sure either empty or has all transcripts
     # otherwise, incomplete loading and will need to clear it and start over

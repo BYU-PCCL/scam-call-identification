@@ -3,10 +3,10 @@ import re
 from dataclasses import dataclass
 from functools import cached_property
 from typing import List, Union
-from src.ml_scam_detector.settings.supported_file_extensions import SUPPORTED_FILE_EXTENSIONS
-from src.ml_scam_detector.utils.error_utils import format_context
+from src.ml_scam_classification.settings.supported_file_extensions import SUPPORTED_FILE_EXTENSIONS
+from src.ml_scam_classification.utils.error_utils import format_context
 
-from src.ml_scam_detector.models.string_models import FormatEnforcedStr
+from src.ml_scam_classification.models.string_models import FormatEnforcedStr
 
 # Examples of defining FormatEnforcedStr class
 """
@@ -24,8 +24,8 @@ class ProductCode(FormatEnforcedStr):
 
 import json
 from typing import List, Union
-from src.ml_scam_detector.utils.error_utils import format_context
-from src.ml_scam_detector.utils.enforce_fn_properties import enforce_types, ensure_list_param_not_empty
+from src.ml_scam_classification.utils.error_utils import format_context
+from src.ml_scam_classification.utils.enforce_fn_properties import enforce_types, ensure_list_param_not_empty
 
 
 def is_json(myjson):
@@ -178,8 +178,8 @@ import soundfile as sf
 import numpy as np
 from typing import Callable, Any, List, Tuple
 from dotenv import load_dotenv
-from src.ml_scam_detector.utils.error_utils import format_context
-from src.ml_scam_detector.utils.enforce_fn_properties import enforce_types_disallow_none, ensure_list_param_not_empty
+from src.ml_scam_classification.utils.error_utils import format_context
+from src.ml_scam_classification.utils.enforce_fn_properties import enforce_types_disallow_none, ensure_list_param_not_empty
 
 def read_file(filepath):
     with open(filepath, "r", encoding="utf-8") as file:
@@ -1182,8 +1182,8 @@ UTILS THAT USE THE OBJECTS
 """
 
 
-from src.ml_scam_detector.utils.enforce_fn_properties import ensure_list_param_not_empty, enforce_types_disallow_none
-from src.ml_scam_detector.utils.file_models import (
+from src.ml_scam_classification.utils.enforce_fn_properties import ensure_list_param_not_empty, enforce_types_disallow_none
+from src.ml_scam_classification.utils.file_models import (
     DirPath,
     List,
     FileExtension,

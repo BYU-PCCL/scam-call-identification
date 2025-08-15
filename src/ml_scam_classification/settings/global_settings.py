@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from src.ml_scam_detector.models.meta_models import SingletonMeta
+from src.ml_scam_classification.models.meta_models import SingletonMeta
 
 @dataclass
 class SettingsPaths(metaclass=SingletonMeta):
@@ -8,7 +8,7 @@ class SettingsPaths(metaclass=SingletonMeta):
 
 # ADJUST IF PATHS CHANGE
 settings_paths = SettingsPaths(
-    audio_transcription_settings_path = "src/ml_scam_detector/settings/audio_transcription_settings.json"
+    audio_transcription_settings_path = "src/ml_scam_classification/settings/audio_transcription_settings.json"
 )
 
 # ADJUST FOR DIFFERENT DESIRED SETTINGS

@@ -1,8 +1,8 @@
 import sys
 import time
 
-from src.ml_scam_detector.utils.chatgpt_feature_extraction import run_chatgpt_behavioral_analysis
-from src.ml_scam_detector.utils.file_utils import ensure_file_versioning_ok
+from src.ml_scam_classification.utils.chatgpt_feature_extraction import run_chatgpt_behavioral_analysis
+from src.ml_scam_classification.utils.file_utils import ensure_file_versioning_ok
 
 if __name__ == "__main__":
     # TEMP WARNING UNTIL GET API KEY
@@ -14,17 +14,17 @@ if __name__ == "__main__":
         raise ValueError("Too many arguments. usage: script.py <path_to_prompt>(opt.) <path_to_continuation_prompt>(opt.)")
 
     # SETTINGS
-    PROMPT_FOLDER_LOCATION = "src/ml_scam_detector/prompting"
+    PROMPT_FOLDER_LOCATION = "src/ml_scam_classification/prompting"
     VERSION_TO_USE = 3
-    SELECTED_PROMPT_PATH = "src/ml_scam_detector/prompting/prompt_conner_v3.txt" if n_args < 2 else sys.argv[1]
-    SELECTED_PROMPT_CONT_PATH = "src/ml_scam_detector/prompting/prompt_conner_v3_contd.txt" if n_args < 3 else sys.argv[2]
-    PATH_TO_CONV_DATA = "src/ml_scam_detector/data/call_data_by_conversation/raw_data/call_data_by_conversation_conv_only.csv"
+    SELECTED_PROMPT_PATH = "src/ml_scam_classification/prompting/prompt_conner_v3.txt" if n_args < 2 else sys.argv[1]
+    SELECTED_PROMPT_CONT_PATH = "src/ml_scam_classification/prompting/prompt_conner_v3_contd.txt" if n_args < 3 else sys.argv[2]
+    PATH_TO_CONV_DATA = "src/ml_scam_classification/data/call_data_by_conversation/raw_data/call_data_by_conversation_conv_only.csv"
 
     ######## MASTER SETTINGS - careful when adjusting these as they may have filesystem implications
     PROMPT_FILE_ID_SUBSTR = "prompt" # Assuming all prompt files contain kw: "prompt" somewhere in filename
     VERSIONING_PREFIX = "_v"
     FORCE_ACCEPT_NONMAX_VERSION = False # Will prompt user to double-check if set to true
-    RESPONSE_WRITEPATH = f"src/ml_scam_detector/outputs/{time.time_ns()}__chatgpt__feat_out{VERSIONING_PREFIX}{VERSION_TO_USE}.json"
+    RESPONSE_WRITEPATH = f"src/ml_scam_classification/outputs/{time.time_ns()}__chatgpt__feat_out{VERSIONING_PREFIX}{VERSION_TO_USE}.json"
 
     for fname in SELECTED_PROMPT_PATH, SELECTED_PROMPT_CONT_PATH:
         ensure_file_versioning_ok(

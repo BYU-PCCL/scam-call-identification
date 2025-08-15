@@ -1,7 +1,7 @@
 import pandas as pd
 
 if __name__ == "__main__":
-    df = pd.read_csv("src/ml_scam_detector/data/youtube_scam_calls_2/extracted_features/transcripts.csv")
+    df = pd.read_csv("src/ml_scam_classification/data/youtube_scam_calls_2/extracted_features/transcripts.csv")
 
     print()
     print("_____________________________________________________________________________")

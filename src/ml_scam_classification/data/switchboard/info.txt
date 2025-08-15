@@ -8,12 +8,12 @@ ______________________________________________________________
 
 Easier-to-access Version (GH):
 Navigate to:
-<ROOT>\src\ml_scam_detector\data\switchboard>
+<ROOT>\src\ml_scam_classification\data\switchboard>
 and do:
 git clone https://github.com/cgpotts/swda
 
 Then use the unzip script to unzip to desired location:
-py -m scripts.unzip_file src/ml_scam_detector/data/switchboard/swda/swda.zip src/ml_scam_detector/data/switchboard/unzipped_corpus/ True
+py -m scripts.unzip_file src/ml_scam_classification/data/switchboard/swda/swda.zip src/ml_scam_classification/data/switchboard/unzipped_corpus/ True
 
 _MACOSX folder contains MACOS-specific file metadata, and does not contain instance data, ok to remove if desired
 !!!  If you remove it, keep the folder structure of the "swda" folder (which was/is a sibling folder to the _MACOSX folder), as this is the structure assumed in other modules/scripts)

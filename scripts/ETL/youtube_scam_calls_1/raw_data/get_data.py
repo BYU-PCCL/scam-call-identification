@@ -4,10 +4,10 @@ import kagglehub
 import pandas as pd
 from kagglehub import KaggleDatasetAdapter
 
-from src.ml_scam_detector.utils.file_utils import make_dir_rec
+from src.ml_scam_classification.utils.file_utils import make_dir_rec
 
 if __name__ == "__main__":
-    PATH_TO_WRITE_DATA = "src/ml_scam_detector/data/youtube_scam_calls_1/raw_data/YT_scams_1.csv"
+    PATH_TO_WRITE_DATA = "src/ml_scam_classification/data/youtube_scam_calls_1/raw_data/YT_scams_1.csv"
 
     # path to kaggle
     kaggle_dataset_rel_path = "FullTranscriptData.csv"

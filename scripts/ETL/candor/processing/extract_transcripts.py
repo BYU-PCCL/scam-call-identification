@@ -11,9 +11,9 @@ if __name__ == "__main__":
     Gets the candor datasets transcripts json (from the expected location), extracts the transcripts, and writes them to a csv. It creates the new location for the csv if not already created (the extracted_features folder).
     """
 
-    CANDOR_FOLDER_PATH = "src\\ml_scam_detector\\data\\candor"
+    CANDOR_FOLDER_PATH = "src\\ml_scam_classification\\data\\candor"
     DEFAULT_CANDOR_DATA_PATH = os.path.join(CANDOR_FOLDER_PATH, "raw_data")
-    DEFAULT_CANDOR_TRANSCRIPT_WRITE_PATH = "src\\ml_scam_detector\\data\\candor\\processed"
+    DEFAULT_CANDOR_TRANSCRIPT_WRITE_PATH = "src\\ml_scam_classification\\data\\candor\\processed"
 
     assert_path_exists(DEFAULT_CANDOR_DATA_PATH)
 
@@ -35,10 +35,10 @@ if __name__ == "__main__":
     destination_dir = os.path.join(CANDOR_FOLDER_PATH, "processed")
     full_destination_path = os.path.join(destination_dir, "transcripts.csv")
     # TODO REMOVE following line once works and leave space
-    assert full_destination_path == "src\\ml_scam_detector\\data\\candor\\processed\\transcripts.csv"
+    assert full_destination_path == "src\\ml_scam_classification\\data\\candor\\processed\\transcripts.csv"
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
-    assert_path_exists(os.path.join("src\\ml_scam_detector\\data\\candor\\processed"))
+    assert_path_exists(os.path.join("src\\ml_scam_classification\\data\\candor\\processed"))
 
     # load jsons...
     transcripts = []
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     dir_present = os.path.exists(destination_dir)
     if not dir_present:
         os.makedirs(destination_dir)
-    assert_path_exists("src/ml_scam_detector/data/candor/processed")
+    assert_path_exists("src/ml_scam_classification/data/candor/processed")
 
     # if path already existed with a csv, make sure either empty or has all transcripts
     # otherwise, incomplete loading and will need to clear it and start over

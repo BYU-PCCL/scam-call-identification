@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from src.ml_scam_detector.models.meta_models import SingletonMeta
-from src.ml_scam_detector.settings.meta.audio_transcription_meta_settings import audio_transcription_meta_settings
+from src.ml_scam_classification.models.meta_models import SingletonMeta
+from src.ml_scam_classification.settings.meta.audio_transcription_meta_settings import audio_transcription_meta_settings
 
 @dataclass
 class AudioTranscriptionSettings(metaclass=SingletonMeta):

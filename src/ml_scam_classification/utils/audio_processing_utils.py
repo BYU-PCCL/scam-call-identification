@@ -1,15 +1,15 @@
 from typing import Union, List
 from pydub import AudioSegment
-from src.ml_scam_detector.utils.file_models import AudioFilePath, DirPath, FileExtension, NonEmptyDir, JSONFilePath, DirPathAlwaysRequireExists
+from src.ml_scam_classification.utils.file_models import AudioFilePath, DirPath, FileExtension, NonEmptyDir, JSONFilePath, DirPathAlwaysRequireExists
 
 from pydub.utils import mediainfo
-from src.ml_scam_detector.utils.json_utils import get_json_from_path_str
-from src.ml_scam_detector.utils.enforce_fn_properties import (
+from src.ml_scam_classification.utils.json_utils import get_json_from_path_str
+from src.ml_scam_classification.utils.enforce_fn_properties import (
     enforce_types,
     ensure_list_param_not_empty,
     ensure_valid_audio_conversion_settings
 )
-from src.ml_scam_detector.utils.file_utils import (
+from src.ml_scam_classification.utils.file_utils import (
     assert_folder_has_at_least_one_file,
     assert_path_exists,
     folder_only_has_given_file_types,
@@ -21,7 +21,7 @@ from src.ml_scam_detector.utils.file_utils import (
 
 def get_supported_transcription_model_str_ids():
     supported_transcription_models_info_json = get_json_from_path_str(
-        path=JSONFilePath("src/ml_scam_detector/settings/supported_transcription_models.json"),
+        path=JSONFilePath("src/ml_scam_classification/settings/supported_transcription_models.json"),
         context="In get_supported_transcription_model_str_idx"
     )
     list_supported_models_entries = None
@@ -67,6 +67,7 @@ def change_audio_sample_rate_preserve_max_info(
         ensure_input_audio_file_exists: bool = True,
         create_output_dir: bool = False # If False, output dir must exist
 ):
+    pass
 
 
 @enforce_types
@@ -193,8 +194,8 @@ def transcribe_audio_clips_in_folder(
 
 if __name__ == "__main__":
     transcribe_audio_clips_in_folder(
-        input_folder_path="src/ml_scam_detector/data/real-phone-calls/josearangos_spanish-calls-corpus-Friends/calls_audio",
-        output_folder_path="src/ml_scam_detector/data/real-phone-calls/josearangos_spanish-calls-corpus-Friends/calls_transcripts",
+        input_folder_path="src/ml_scam_classification/data/real-phone-calls/josearangos_spanish-calls-corpus-Friends/calls_audio",
+        output_folder_path="src/ml_scam_classification/data/real-phone-calls/josearangos_spanish-calls-corpus-Friends/calls_transcripts",
         supported_file_extensions=["wav"],
         ignore_non_supported_files=False
     )

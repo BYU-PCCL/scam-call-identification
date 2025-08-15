@@ -1,6 +1,6 @@
 from typing import Tuple
-from src.ml_scam_detector.settings.global_settings import global_settings
-from src.ml_scam_detector.models.meta_models import SingletonMeta
+from src.ml_scam_classification.settings.global_settings import global_settings
+from src.ml_scam_classification.models.meta_models import SingletonMeta
 
 class AudioTranscriptionMetaSettings(metaclass=SingletonMeta):
     # DEFAULT SETTING VALUES LISTED HERE

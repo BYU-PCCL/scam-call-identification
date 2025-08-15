@@ -1,21 +1,21 @@
 import os
 import pandas as pd
 
-from src.ml_scam_detector.utils.cout_log_utils import (
+from src.ml_scam_classification.utils.cout_log_utils import (
     cout_log,
     cout_log_info
 )
-from src.ml_scam_detector.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
+from src.ml_scam_classification.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
 
-from src.ml_scam_detector.utils.chatgpt_utils import start_conversation, continue_conversation
+from src.ml_scam_classification.utils.chatgpt_utils import start_conversation, continue_conversation
 
 import sys
 import os
 import time
 import pandas as pd
-from src.ml_scam_detector.utils.file_utils import read_file
-from src.ml_scam_detector.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
-from src.ml_scam_detector.utils.chatgpt_utils import (
+from src.ml_scam_classification.utils.file_utils import read_file
+from src.ml_scam_classification.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
+from src.ml_scam_classification.utils.chatgpt_utils import (
     start_conversation,
     continue_conversation,
     build_progress_message,

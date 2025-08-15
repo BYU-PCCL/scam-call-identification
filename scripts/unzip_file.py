@@ -13,7 +13,7 @@ If you supply any args, you must supply all three. Mixing defaults and CLI input
 """
 
 import sys
-from src.ml_scam_detector.utils.file_utils import unzip_file
+from src.ml_scam_classification.utils.file_utils import unzip_file
 
 # ─── Default configuration ────────────────────────────────────────────────
 

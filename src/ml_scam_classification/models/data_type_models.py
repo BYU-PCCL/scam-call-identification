@@ -1,7 +1,7 @@
 from typing import Union, Dict, List
 from dataclasses import dataclass
 
-from src.ml_scam_detector.utils.json_utils import is_json
+from src.ml_scam_classification.utils.json_utils import is_json
 
 @dataclass
 class JSONObject:

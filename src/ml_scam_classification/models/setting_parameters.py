@@ -1,6 +1,6 @@
 import inspect
 from functools import wraps
-from src.ml_scam_detector.models.meta_models import SingletonMeta
+from src.ml_scam_classification.models.meta_models import SingletonMeta
 
 class AudioTranscriptionSettingsParameterIds(metaclass=SingletonMeta):  # Singleton settings class
     MAX_SUPPORTED_AUDIO_SIZE_BYTES: str = "MAX_AUD_BYTES"

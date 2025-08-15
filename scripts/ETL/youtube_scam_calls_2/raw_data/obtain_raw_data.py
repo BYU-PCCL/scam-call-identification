@@ -10,7 +10,7 @@ from src.general_file_utils.utils.csv_utils import append_df_rows_to_csv
 
 if __name__ == "__main__":
     # write transcript data to destination
-    youtube_scam_calls_2 = "src\\ml_scam_detector\\data\\youtube_scam_calls_2"
+    youtube_scam_calls_2 = "src\\ml_scam_classification\\data\\youtube_scam_calls_2"
     DEFAULT_DATA_PATH = os.path.join(youtube_scam_calls_2, "raw_data")
 
     # Read dataset from HuggingFace
