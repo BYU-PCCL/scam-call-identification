@@ -1,0 +1,4 @@
+Link: https://www.kaggle.com/datasets/jxxn03x/thai-call-center-call-log-dataset
+Source: Hugging Face
+Entry Title: Thai Call Center Call Log Dataset
+User: JXXN03X

@@ -4,3 +4,12 @@ src/ml_scam_detector/outputs/**
 src/ml_scam_detector/data/**
 build_image_docker_scams.sh
 Dockerfile
+
+# Ignore everything in data folder
+src/ml_scam_detector/data/**
+
+# Unignore the subfolders of the data folder so Git looks inside
+!src/ml_scam_detector/data/**/
+
+# Unignore any "info.txt" files anywhere inside myfolder
+!src/ml_scam_detector/data/**/info.txt

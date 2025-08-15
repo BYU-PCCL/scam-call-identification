@@ -1,0 +1,9 @@
+GOLD MINE
+"Q1=Man" filetype:pdf "call"
+
+Google search terms
+"call transcript" AND filetype:pdf AND -"earnings" AND -"investor" AND -"Q1" AND -"Q2" AND -"Q3" AND -"Q4" AND -"conference call" AND -"thank you for joining" AND -"hello everyone" AND -"Hi everybody" AND -"Hi, everybody" AND -"in this document" AND -"holdings" AND -"in this meeting" AND -"ladies and gentlemen" AND -"for joining us"
+
+"ecs1" AND "transcript" AND filetype:pdf AND "call"
+
+"911" AND "transcript" AND filetype:pdf

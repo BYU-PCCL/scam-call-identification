@@ -1,0 +1,154 @@
+Using this data for:
+Non-scam call instances for model training
+
+______________________________________________________________
+|                                                             |
+|           ***  Easier-to-access Version (GH)  ***           |
+|_____________________________________________________________|
+
+Easier-to-access Version (GH):
+Navigate to:
+<ROOT>\src\ml_scam_detector\data\switchboard>
+and do:
+git clone https://github.com/cgpotts/swda
+
+Then use the unzip script to unzip to desired location:
+py -m scripts.unzip_file src/ml_scam_detector/data/switchboard/swda/swda.zip src/ml_scam_detector/data/switchboard/unzipped_corpus/ True
+
+_MACOSX folder contains MACOS-specific file metadata, and does not contain instance data, ok to remove if desired
+!!!  If you remove it, keep the folder structure of the "swda" folder (which was/is a sibling folder to the _MACOSX folder), as this is the structure assumed in other modules/scripts)
+
+______________________________________________________________
+|                                                             |
+|                   ***  FEATURES INFO  ***                   |
+|_____________________________________________________________|
+
+Feature 0: `swda_filename`  
+:   **Description:** Path (relative to your local copy of SwDA) of the CSV file holding these utterances.  
+:   **Input:** (ignore)
+
+Feature 1: `ptb_basename`  
+:   **Description:** Path (relative to your Penn‑Treebank‑3 parse‑tree directory) of the file that contains the syntactic trees for this conversation.  
+:   **Input:** (ignore)
+
+Feature 2: `conversation_no`  
+:   **Description:** Numeric ID of the Switchboard call (so all rows with the same number belong to the same call).  
+:   **Input:** (ignore in instances as they encode order, but use to group/order)
+
+Feature 3: `transcript_index`  
+:   **Description:** Zero‑based index of this slash‑unit within the CSV file (i.e. the row number).  
+:   **Input:** (ignore in instances as they encode order, but use to group/order)
+
+Feature 4: `act_tag`
+:   **Description:** The SWBD‑DAMSL dialog‑act label (e.g. `qw` = wh‑question, `o` = “other”).  
+:   **Input:** (include as one-hot initially, possibly auto-encode later or do time-based relative metrics or implement attention)
+
+Feature 5: `caller`  
+:   **Description:** Which participant is speaking:  
+    - `A` = the “from” caller  
+    - `B` = the “to” caller  
+:   **Input:** Use one-hot, with 1 for the "from" caller, i.e. the person who is calling, and 0 for the "to" caller, i.e. the receiver, who the call is going to
+
+Feature 6: `utterance_index`  
+:   **Description:** Turn number within the conversation (increments each time the speaker changes).  
+:   **Input:** (ignore in instances as they encode order, but use to group/order)
+
+Feature 7: `subutterance_index`  
+:   **Description:** Within that turn, the index of this slash‑unit (allows long turns to be broken into multiple annotation units).  
+:   **Input:** (ignore in instances as they encode order, but use to group/order)
+
+Feature 8: `text`  
+:   **Description:** The raw transcription of that slash‑unit, including the trailing `/` or `-/`.  
+:   **Input:** LLM-extracted behavioral features and SWBD-DAMSL-inspired classifications, sampled variable-factor-compressed full history
+
+Feature 9: `pos`  
+:   **Description:** The same text, with Penn‑Treebank‑style POS tags (`WORD/TAG`).  
+:   **Input:** POS tags in order, sampled variable-factor-compressed full history
+
+Feature 10: `trees`  
+:   **Description:** The full PTB‑3 bracketed parse(s) for this slash‑unit (one or more S‑rooted tree strings).  
+:   **Input:** The parse‑tree field
+
+Feature 11: `ptb_treenumbers`  
+:   **Description:** Which tree(s) in the PTB file this utterance aligns to (1‑based indices).  
+:   **Input:** The tree‑number list
+
+
+
+
+
+
+LDC version:
+
+______________________________________________________________
+|             Source (Page Used to Download Data)             |
+|_____________________________________________________________|
+https://isip.piconepress.com/projects/switchboard/
+
+______________________________________________________________
+|               DOI (Digital Object Identifier)               |
+|_____________________________________________________________|
+https://doi.org/10.35111/sw3h-rw02
+This is a persistent link that should work despite future website changes.
+
+______________________________________________________________
+|                    Online Documentation                     |
+|_____________________________________________________________|
+https://catalog.ldc.upenn.edu/docs/LDC97S62/
+(Use DOI to access menu if link doesn't work in the future)
+
+______________________________________________________________
+|                         Information                         |
+|______________https://doi.org/10.35111/sw3h-rw02_____________|
+Home › Language Resources › Data
+Switchboard-1 Release 2
+Item Name:	Switchboard-1 Release 2
+Author(s):	John J. Godfrey, Edward Holliman
+LDC Catalog No.:	LDC97S62
+ISBN:	1-58563-121-3
+ISLRN:	988-076-156-109-5
+DOI:	https://doi.org/10.35111/sw3h-rw02
+Member Year(s):	1993, 1997
+DCMI Type(s):	Sound
+Sample Type:	2-channel ulaw
+Sample Rate:	8000
+Data Source(s):	telephone conversations
+Project(s):	EARS, GALE, Hub5-LVCSR, NIST SRE
+Application(s):	speaker identification, speech recognition
+Language(s):	English
+Language ID(s):	eng
+License(s):	LDC User Agreement for Non-Members
+Online Documentation:	LDC97S62 Documents
+Licensing Instructions:	Subscription & Standard Members, and Non-Members
+Citation:	Godfrey, John J., and Edward Holliman. Switchboard-1 Release 2 LDC97S62. Web Download. Philadelphia: Linguistic Data Consortium, 1993.
+Related Works:	View
+Introduction
+The Switchboard-1 Telephone Speech Corpus (LDC97S62) consists of approximately 260 hours of speech and was originally collected by Texas Instruments in 1990-1, under DARPA sponsorship. The first release of the corpus was published by NIST and distributed by the LDC in 1992-3. Since that release, a number of corrections have been made to the data files as presented on the original CD-ROM set and all copies of the first pressing have been distributed.
+
+Switchboard is a collection of about 2,400 two-sided telephone conversations among 543 speakers (302 male, 241 female) from all areas of the United States. A computer-driven robot operator system handled the calls, giving the caller appropriate recorded prompts, selecting and dialing another person (the callee) to take part in a conversation, introducing a topic for discussion and recording the speech from the two subjects into separate channels until the conversation was finished. About 70 topics were provided, of which about 50 were used frequently. Selection of topics and callees was constrained so that: (1) no two speakers would converse together more than once and (2) no one spoke more than once on a given topic.
+
+Data
+In this release, assembled and published by the LDC, all known errors affecting the original publication of speech files were corrected. In addition, modifications have been made to the contents of the NIST Sphere headers of all speech files, to identify each file as being part of the new release and to make the usage of the sample_count header field consistent with standard Sphere usage. (In particular, the sample_count field should reflect the number of samples on each channel in the file. In the initial release, this field was improperly set to be the total number of samples in both channels of the file this has been corrected in the new release.)
+
+Since the 1997 release, the Switchboard transcripts have been carefully revised at The Institute for Signal and Information Processing (ISIP) and additional problems have been discovered and patched. Three speech files, part of the original release, were inadvertently left off the 1997 revision. After corpus users noted some problems in the original speaker attribution table, LDC audited the problem calls and corrected the attributions. The latest version of ISIP transcriptions, the ISIP update of the ICSI phonetic transcriptions, and corrected word alignments are all available at ISIP. The LDC makes the transcript summaries available via in the online docs folder. Researchers have used SWB-1 data for various annotation projects including discourse annotation/speech acts, part-of-speech tagging and parsing, up-to-date orthographic transcriptions, and phonetic transcriptions. This summary documents which files have been used for the various annotations. In addition to the index of these file characteristics, there is also a table detailing speaker attributes.
+
+Samples
+Please view this audio sample.
+
+Updates
+08/11/2015: The three files from the 03/26/2013 update were converted into unshortened sphere. File tables and documentation were updated to reflect the conversion of these files. The corpus is also now available as a web download. All copies of this corpora obtained after the above date include this update.
+
+03/26/2013: Three previously missing files were added to this release. (sw02289.sph, sw04361.sph, sw04379.sph) File tables and documentation were updated to reflect the addition of these files. Please contact ldc@ldc.upenn.edu to obtain this update. All copies of this corpora obtained after the above date already include this update.
+
+09/29/2011: Added a file list, available through online docs, to reflect its release on DVD. Also, an updated readme reflects these changes.
+
+11/12/2007: Updated and corrected speaker and call tables are now available online in the corpus documentation directory at https://catalog.ldc.upenn.edu/docs/LDC97S62/
+
+09/2008: The Switchboard Dialog Act Corpus is a version of Switchboard-1 Release 2 tagged with a shallow discourse tagset of approximately 60 basic dialog act tags and combinations. The discourse tag-set used is an augmentation of the Discourse Annotation and Markup System of Labeling (DAMSL) tag-set and is referred to as the SWBD-DAMSL labels. These annotations were created in 1997 at the University of Colorado at Boulder, with the goal of building better language models for automatic speech recognition of the Switchboard domain. To that end, the label-set incorporates both traditional sociolinguistic and discourse-theoretic rhetorical relations/adjacency-pairs as well as some more form-based models. This corpus contains labels for 1155 5-minute conversations comprising 205,000 utterances and 1.4 million words. The Switchboard Dialog Act Corpus is available as a free download via the online documentation folder.
+
+ 
+
+ 
+
+Copyright
+Portions © 1992, 1993, 1997 Trustees of the University of Pennsylvania

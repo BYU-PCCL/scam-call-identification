@@ -1,0 +1,6 @@
+Kaggle Dataset
+
+243 Real Scam Phone Calls (partial transcripts) from youtube
+Mostly scam baiters, but some dial-ups also included
+
+https://www.kaggle.com/datasets/rivalcults/youtube-scam-phone-call-transcripts?utm_source=chatgpt.com
