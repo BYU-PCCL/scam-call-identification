@@ -30,7 +30,7 @@ def run_chatgpt_behavioral_analysis(
     cout_log_info(2)
 
     # Read conversation data (using only a subset for this example)
-    conversations = pd.read_csv('src/ml_scam_detector/data/call_data_by_conversation/raw_data/call_data_by_conversation.csv')
+    conversations = pd.read_csv(path_to_data)
 
     cout_log_info(3)
 
