@@ -1,0 +1,40 @@
+Conner v4 -> v5
+Goals: 
+- Have Adapted most common behaviors from SWBD-DAMSL
+
+- remove the negative statements and turn them into positive statements
+- Remove or combine vague behaviors into more concrete 
+- Re-group and condense behaviors where appropriate
+- prioritize by most common utterances from SWBD-DAMSL Shallow-Discourse-Function Annotation Features
+
+Behavior Groups
+1 - General Categories of Informational or Opinion Statements
+2 - Meta-Statements (Statements About Other Statements)
+3 - Conversational Flow (Greetings, Changing Topics, etc.)
+4 - Questions
+5 - Answers
+
+topics in order of most common scam topics
+
+gift cards, wire transfers, or cryptocurrency
+
+https://www.security.org/digital-safety/scams/gift-cards/
+deadlines or danger to a person
+
+Most common topics talked about on the phone
+
+
+
+Conner v5->v6
+
+Focusing on developing dimensions of behaviors
+
+
+Specific Elements in Informational Statements
+
+Implications
+e.g. "If you don't X we will have to Y"
+
+Common Emotionally-Charged Words e.g. "If you don't
+
+IDEA - maybe make it a chunk that contains only one subject, with side chains that connect it and reference it to previous subjects (like -1, -2, etc in a graph in its type and references to previous subjects, and the context window is a certain size)
