@@ -1,0 +1,91 @@
+import os
+import re
+import sys
+import time
+import numpy as np
+import pandas as pd
+from google import genai
+from google.genai import types
+from src.ml_scam_detector.project_utils.file_utils import get_gemini_api_key, ensure_file_versioning_ok
+
+def run_gemini_behavioral_analysis(
+    prompt_filepath=None, 
+    response_writepath=None # Set defaults to None so paths must be specified to avoid need for default paths and keeping that updated
+    ):
+
+    if not (None == None):
+        print("We have a problem...")
+    if prompt_filepath == None or response_writepath == None:
+        raise ValueError("ERROR - Attmepted to run Gemini behavioral analysis without providing path to prompt and/or for writing out response")
+
+    # Set up Google Gemini
+    key = get_gemini_api_key() # Gets api key from .env file
+    client = genai.Client(api_key=key)  # Configure the global API key
+    client = genai.Client()
+
+    with open(prompt_filepath, "r") as file:
+        system_prompt = file.read()
+
+    conversations = pd.read_csv('src/ml_scam_detector/data/call_data_by_conversation.csv')
+    conversations_small = conversations[:2]
+
+    for index, row in conversations_small.iterrows():
+        complete_prompt = system_prompt + "\n\ncall transcript:\n\n" + row['TEXT']
+        print("complete prompt:")
+        print(complete_prompt)
+
+        response = client.models.generate_content(
+            model="gemini-2.5-pro", contents=complete_prompt,
+            config=types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(thinking_budget=32768)
+            )
+        )
+        print(response)
+
+        output_file = response_writepath
+
+        with open(output_file, "a") as file:
+            # file.write('\n\n' + row['TEXT'] + "\n\n")
+            file.write(response.text)
+        
+        print("(!!!) - WARNING - Rate limits not configured... waiting 1 min to be safe.")
+        print("Configure rate limits before removing this warning and the exit() statement!")
+        import time
+        time.sleep(61)
+        exit()
+
+
+if __name__ == "__main__":
+    # SETTINGS
+    PROMPT_FOLDER_LOCATION = "src/ml_scam_detector/prompting"
+    VERSION_TO_USE = 3
+    SELECTED_PROMPT_PATH = "src/ml_scam_detector/prompting/prompt_conner_v3.txt"
+
+    ######## MASTER SETTINGS - careful when adjusting these as they may have filesystem implications
+    PROMPT_FILE_ID_SUBSTR = "prompt" # Assuming all prompt files contain kw: "prompt" somewhere in filename
+    VERSIONING_PREFIX = "_v"
+    FORCE_ACCEPT_NONMAX_VERSION = False # Will prompt user to double-check if set to true
+
+    ensure_file_versioning_ok(
+        folder_to_check=PROMPT_FOLDER_LOCATION,
+        versioning_prefix=VERSIONING_PREFIX,
+        n_version_to_use=VERSION_TO_USE,
+        selected_fname=SELECTED_PROMPT_PATH,
+        required_file_id_substr=PROMPT_FILE_ID_SUBSTR,
+        FORCE_ACCEPT_NONMAX_VERSION=FORCE_ACCEPT_NONMAX_VERSION
+    )
+
+    n_args = len(sys.argv)
+    if n_args == 1:
+        run_gemini_behavioral_analysis(
+            prompt_filepath=SELECTED_PROMPT_PATH,
+            response_writepath=f"src/ml_scam_detector/outputs/{time.time_ns()}__feature_extraction_out_v3.txt"
+            )
+    elif n_args == 2:
+        run_gemini_behavioral_analysis(sys.argv[1])
+        run_gemini_behavioral_analysis(
+            prompt_filepath=sys.argv[1],
+            response_writepath=f"src/ml_scam_detector/outputs/{time.time_ns()}__feature_extraction_out_v3.txt"
+            )
+    elif n_args == 3:
+        run_gemini_behavioral_analysis(sys.argv[1], sys.argv[2])

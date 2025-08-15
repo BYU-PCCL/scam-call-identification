@@ -1,12 +1,10 @@
-import sys
-import os
 import requests
 import json
 from dotenv import load_dotenv
 from openai import OpenAI
-from file_utils import get_chatgpt_api_key
-from cout_log_utils import cout_log, cout_log_action, cout_log_title, cout_log_w_char_limit, cout_log_info
-
+from src.ml_scam_detector.project_utils.file_utils import get_chatgpt_api_key
+from src.ml_scam_detector.project_utils.json_utils import is_json
+from src.ml_scam_detector.project_utils.cout_log_utils import cout_log_info
 
 def send_prompt_to_chatgpt(
     prompt, 
@@ -243,7 +241,7 @@ def get_json_from_chatgpt_response(response_text):
         json_and_rest = response_text.split("```json\n")[1]
         json_only = json_and_rest.split("\n```")[0]
     except IndexError:
-        if len(response) < 100 and ('done' in response or 'Done' in response):
+        if len(response_text) < 100 and ('done' in response_text or 'Done' in response_text):
             print("WARNING - ChatGPT indicated it was done after only one line. This is fine so long as the current transcript is only one line, but please double check.")
 
             cont = input("Continue (y/n)?")
@@ -252,7 +250,7 @@ def get_json_from_chatgpt_response(response_text):
                 return
             
             print("ChatGPT indicated it was done processing the transcript. Moving to the next transcript.")
-            continue
+            return
         raise ValueError("Critical Error: JSON delimiters not found as expected in the response.")
     if not is_json(json_only):
             raise ValueError("Critical Error: JSON not parsed correctly from ChatGPT response. Terminating.")

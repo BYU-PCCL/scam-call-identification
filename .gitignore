@@ -1,0 +1,6 @@
+**/__pycache__/
+.env
+src/ml_scam_detector/outputs/**
+src/ml_scam_detector/data/**
+build_image_docker_scams.sh
+Dockerfile

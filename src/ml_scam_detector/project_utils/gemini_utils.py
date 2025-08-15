@@ -1,5 +1,5 @@
 from google import genai
-from file_utils import get_gemini_api_key
+from src.ml_scam_detector.project_utils.file_utils import get_gemini_api_key
 from dotenv import load_dotenv
 
 

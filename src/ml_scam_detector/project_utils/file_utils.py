@@ -1,4 +1,6 @@
 import os
+import re
+import numpy as np
 from dotenv import load_dotenv
 
 
@@ -83,6 +85,28 @@ def get_chatgpt_api_key():
         raise ValueError("Please set the OPENAI_API_KEY environment variable")
     return openai_key
 
+def assert_existence_of_filename_w_substring(
+        dir_to_check,
+        req_substr,
+        FileNotFound_err_msg
+        ):
+    """
+    Ensures there is at least one file at the given location with the required substr in the fname
+    """
+    # Attempt to open provided dir and search for fname with req substr
+    try:
+        with os.scandir(dir_to_check) as entries:
+            for entry in entries:
+                # return if found match (only one match required)
+                if (req_substr in entry.name) and os.path.isfile(os.path.join(dir_to_check, entry.name)):
+                    return
+    except FileExistsError:
+        raise Exception(FileExistsError)
+
+    # raise error if reached, could not find fname in provided dir with req substr
+    raise FileNotFoundError(FileNotFound_err_msg)
+
+
 class WarningTracker:
     _instance = None  # holds single instance
     _warning_given = False  # Tracks whether the warning has been given
@@ -127,6 +151,78 @@ def cout_logging_enabled():
     raise ValueError("Critical Error: .env Variable \"cout_log\" exists, but was assigned a value which the function did not account for.")
 
 
+def gen_fn_get_int_after_prefix(prefix=None):
+    if prefix is None:
+        raise ValueError("Attempted to generate get int after prefix fn with no prefix passed")
+    
+    def get_int_after_prefix(str):
+        return int((re.split(r'\D+', (str.split(prefix)[1][0])))[0]) if ("_v" in str) else None
+
+    return get_int_after_prefix
+
+
+def ensure_selected_version_is_most_recent(
+        get_version_fn,
+        files_to_compare,
+        selected_fname
+):
+    # Get ints after version suffix
+    int_matches_after_suffx = [get_version_fn(fname) for fname in files_to_compare]
+    found_vers = np.sum(np.array([type(v) is int for v in int_matches_after_suffx])) > 0
+    versions_found = []
+    [versions_found.append(int_matches_after_suffx[i]) for i, vers in enumerate(int_matches_after_suffx) if not (vers == None)] # take out None values
+    
+    if not versions_found or len(versions_found) == 0:
+        raise SystemError("Found no files with version with selected prefix...")
+    
+    # Ensure selected path has max version
+    max_vers_found = max(versions_found)
+    selected_prompt_version_number = get_version_fn(selected_fname)
+
+    # raise error if selected version is not most recent version
+    if selected_prompt_version_number < max_vers_found:
+        raise Exception(f"(EXCEPTION) - Selected prompt version number ({selected_prompt_version_number}) is not most recent version found ({max_vers_found}) - override by explicitly setting \"FORCE_ACCEPT_PREV_VERSION\", or update \"SELECTED_PROMPT_PATH\" to desired file with most recent prompt version.")
+    
+
+def ensure_file_versioning_ok(
+        folder_to_check,
+        versioning_prefix,
+        n_version_to_use,
+        selected_fname,
+        required_file_id_substr,
+        FORCE_ACCEPT_NONMAX_VERSION=False
+):
+    # Ensure prompt folder location has prompts by checking for "prompt" keyword in files
+    assert_existence_of_filename_w_substring(
+        dir_to_check=folder_to_check,
+        req_substr=required_file_id_substr,
+        FileNotFound_err_msg="(ERROR) - No filenames containing required substring at default folder_to_check, assuming no valid versions found..."
+        )
+    
+    # Ensure using most recent prompt version available if indicated
+    if not FORCE_ACCEPT_NONMAX_VERSION:
+        # First, make sure selected file is actually version to use and has required id str
+        if not ((versioning_prefix + str(n_version_to_use)) in selected_fname):
+            raise ValueError("Tried to assert using up-to-date version but passed fname of file to use does not match passed version # to use...")
+        if not (required_file_id_substr in selected_fname):
+            raise ValueError("Attempted to check version, but passed fname does not contain required id str...")
+
+        # Make sure the selected version is the most recent version
+        ensure_selected_version_is_most_recent(
+            get_version_fn=gen_fn_get_int_after_prefix(versioning_prefix),
+            files_to_compare=os.listdir(folder_to_check),
+            selected_fname=selected_fname
+        )
+    else:
+        # FORCE ACCEPT VERSION, confirm first
+        ans = input("You are attempting to force acceptance of using old prompt version. To confirm, type 'y'")
+        if not (ans == 'y'):
+            print("Exiting...")
+            exit()
+        print("(!!!) - Continuing with old prompt version")
+
+"""
+#Old testing
 if __name__ == "__main__":
     print("Testing find_repo_root")
     print(find_repo_root())
@@ -136,7 +232,8 @@ if __name__ == "__main__":
     print("-")
     print("Testing get_gemini_key_path:")
     print("(note that it will only work if the fileanme contains the words \"gemini\" and \"key\")")
-    print(get_gemini_key_path())
+    print(get_gemini_api_key())
     print("-")
     print("Testing get_gemini_api_key:")
     print(get_gemini_api_key())
+"""

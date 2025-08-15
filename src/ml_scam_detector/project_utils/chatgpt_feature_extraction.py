@@ -1,32 +1,25 @@
-import sys
 import os
-import re
 import pandas as pd
-import json
-import requests
-from dotenv import load_dotenv
 
-from cout_log_utils import (
+from src.ml_scam_detector.project_utils.cout_log_utils import (
     cout_log,
-    cout_log_title,
-    cout_log_action,
-    cout_log_w_char_limit,
     cout_log_info
 )
-from json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
-from file_utils import get_chatgpt_api_key
+from src.ml_scam_detector.project_utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
 
-from chatgpt_utils import start_conversation, continue_conversation
+from src.ml_scam_detector.project_utils.chatgpt_utils import start_conversation, continue_conversation
 
 
 def run_chatgpt_behavioral_analysis(
-    prompt_filepath="./data/gemini_prompt_conner_v3.txt",  # default system prompt file
-    continuation_prompt_filepath="./data/gemini_prompt_conner_v3_contd.txt",
-    response_writepath="./outputs/feature_extraction_chatgpt_out.txt",
-    model="gpt-4o-2024-11-20",
-    model_role="You are a call analysis system creating useful features to input to a scam detection model.", # default role we could use
+    prompt_filepath,
+    continuation_prompt_filepath,
+    path_to_data,
+    response_writepath,
+    model,
+    model_role,
     start_transcript_index=0,
-    end_transcript_index=1
+    end_transcript_index=1, # by default only do 1 transcript
+    required_transcripts_col_name="transcripts" # default... to ensure double checking what column is being used
 ):
     cout_log_info(1)
 
@@ -37,7 +30,7 @@ def run_chatgpt_behavioral_analysis(
     cout_log_info(2)
 
     # Read conversation data (using only a subset for this example)
-    conversations = pd.read_csv('./data/call_data_by_conversation.csv')
+    conversations = pd.read_csv('src/ml_scam_detector/data/call_data_by_conversation.csv')
 
     cout_log_info(3)
 
@@ -51,17 +44,29 @@ def run_chatgpt_behavioral_analysis(
     # List to store one json per transcript
     list_all_json_results = []
 
-    for index, row in conversations.iterrows():
+    # read data
+    try:
+        df = pd.read_csv(path_to_data)
+    except Exception as e:
+        print("An error occurred:", e)
+    
+    if (df.shape[1] > 1):
+        raise Exception("Passed df with more than 1 column -- df should only contain one transcripts column at this point in processing...")
+    
+    if not (df.columns[0] == required_transcripts_col_name):
+        raise ValueError(f"Required column name set as: {required_transcripts_col_name}, but passed df has col name: {df.columns[0]}")
+
+    transcripts = df.iloc[:, 0]
+
+    for curr_transcript_i, transcript_text in enumerate(transcripts):
         # Checking to see if configured to start at a later transcript... if so, need to skip if not there yet
         if conversation_idx < start_transcript_index:
             continue
-        
         # Checking to see if configured to end before the current transcript index, if so, break out of the loop
         if conversation_idx >= end_transcript_index:
             break
 
         conversation_idx += 1
-        transcript_text = row['TEXT'] # assuming in column 'TEXT'
 
         cout_log_info(4)
 
@@ -73,10 +78,11 @@ def run_chatgpt_behavioral_analysis(
             )
 
         # Build progress cout output message
+        extra = ""
+        if start_transcript_index is not None and start_transcript_index > 0:
+            extra = f", configured to start at call transcript {start_transcript_index + 1}"
         if end_transcript_index is not None and end_transcript_index < n_conversations:
             extra = f", configured to stop after call transcript {end_transcript_index}"
-        else:
-            extra = ""
         progress_cout_output_message = (
             f"Call Transcript {conversation_idx}/{n_conversations}" + extra
         )
@@ -110,7 +116,7 @@ def run_chatgpt_behavioral_analysis(
             json_and_rest = response_text.split("```json\n")[1]
             json_only = json_and_rest.split("\n```")[0]
         except IndexError:
-            if len(response) < 100 and ('done' in response or 'Done' in response):
+            if len(response_text) < 100 and ('done' in response_text or 'Done' in response_text):
                 print("WARNING - ChatGPT indicated it was done after only one line. This is fine so long as the current transcript is only one line, but please double check.")
 
                 cont = input("Continue (y/n)?")
@@ -230,25 +236,10 @@ def run_chatgpt_behavioral_analysis(
 
             json_strings.append(current_line_json)
 
-       # Prepare a unique file name for the output for this transcript.
-        filename_without_ext, _ = os.path.splitext(response_writepath)
-        filename_suffix_number = str(conversation_idx).zfill(5)
-        dest_path = f"{filename_without_ext}_{filename_suffix_number}.json"
-
         # Combine the JSON strings from all conversation turns into a list and write to file.
         json_to_write = convert_list_json_str_to_json_list(json_strings)
-        write_json_to_file(json_obj=json_to_write, output_path=dest_path)
+        write_json_to_file(json_obj=json_to_write, output_path=response_writepath)
 
         cout_log_info(10)
     
     cout_log("Done.")
-
-
-if __name__ == "__main__":
-    n_args = len(sys.argv)
-    if n_args == 1:
-        run_chatgpt_behavioral_analysis()
-    elif n_args == 2:
-        run_chatgpt_behavioral_analysis(sys.argv[1])
-    elif n_args == 3:
-        run_chatgpt_behavioral_analysis(sys.argv[1], sys.argv[2])
