@@ -4,16 +4,19 @@ import kagglehub
 import pandas as pd
 from kagglehub import KaggleDatasetAdapter
 
-if __name__ == "__main__":
-    DATA_WRITE_PATH = "src/ml_scam_detector/data/youtube_scam_calls_1/raw_data/YT_scams_1.csv"
+from src.ml_scam_detector.utils.file_utils import make_dir_rec
 
-    kaggle_rel_file_path = "FullTranscriptData.csv"
+if __name__ == "__main__":
+    PATH_TO_WRITE_DATA = "src/ml_scam_detector/data/youtube_scam_calls_1/raw_data/YT_scams_1.csv"
+
+    # path to kaggle
+    kaggle_dataset_rel_path = "FullTranscriptData.csv"
 
     # Load the latest version
     df = kagglehub.load_dataset(
     KaggleDatasetAdapter.PANDAS,
     "rivalcults/youtube-scam-phone-call-transcripts",
-    kaggle_rel_file_path,
+    kaggle_dataset_rel_path,
     # Provide any additional arguments like 
     # sql_query or pandas_kwargs. See the 
     # documenation for more information:
@@ -22,4 +25,7 @@ if __name__ == "__main__":
 
     print("First 5 records:", df.head())
 
-    df.to_csv(DATA_WRITE_PATH)
+    # make dirs where needed 
+    make_dir_rec(PATH_TO_WRITE_DATA)
+
+    df.to_csv(PATH_TO_WRITE_DATA)
