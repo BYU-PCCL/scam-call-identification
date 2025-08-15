@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from google import genai
 from google.genai import types
-from src.ml_scam_detector.project_utils.file_utils import get_gemini_api_key, ensure_file_versioning_ok
+from src.ml_scam_detector.utils.file_utils import get_gemini_api_key, ensure_file_versioning_ok
 
 def run_gemini_behavioral_analysis(
     prompt_filepath=None, 

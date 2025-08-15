@@ -1,8 +1,8 @@
 import sys
 import time
 
-from src.ml_scam_detector.project_utils.chatgpt_feature_extraction import run_chatgpt_behavioral_analysis
-from src.ml_scam_detector.project_utils.file_utils import ensure_file_versioning_ok
+from src.ml_scam_detector.utils.chatgpt_feature_extraction import run_chatgpt_behavioral_analysis
+from src.ml_scam_detector.utils.file_utils import ensure_file_versioning_ok
 
 if __name__ == "__main__":
     # TEMP WARNING UNTIL GET API KEY

@@ -2,9 +2,9 @@ import requests
 import json
 from dotenv import load_dotenv
 from openai import OpenAI
-from src.ml_scam_detector.project_utils.file_utils import get_chatgpt_api_key
-from src.ml_scam_detector.project_utils.json_utils import is_json
-from src.ml_scam_detector.project_utils.cout_log_utils import cout_log_info
+from src.ml_scam_detector.utils.file_utils import get_chatgpt_api_key
+from src.ml_scam_detector.utils.json_utils import is_json
+from src.ml_scam_detector.utils.cout_log_utils import cout_log_info
 
 def send_prompt_to_chatgpt(
     prompt, 
