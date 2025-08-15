@@ -1,0 +1,34 @@
+_______________________
+|     ENVIRONMENT     |
+-----------------------
+
+Activating Environment (Windows):
+.\<env-name>\Scripts\activate
+
+_______________________
+|   RUNNING Scripts   |
+-----------------------
+
+Always run via:
+
+python -m dirname-1.dirname-2.file-name
+
+(etc, always use dots instead of slashes, and omit the .py at the end)
+This way it will run it as a module
+That tells python it can import stuff from other modules
+Otherwise, the imports won't work
+
+
+EXAMPLE
+-------
+
+You can run the file at:
+
+scripts/data-processing-scripts/transform_parquet_to_audio.py 
+
+via the terminal command:
+
+python -m scripts.data-processing-scripts.transform_parquet_to_audio
+
+
+
