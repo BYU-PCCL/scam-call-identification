@@ -221,6 +221,32 @@ def ensure_file_versioning_ok(
             exit()
         print("(!!!) - Continuing with old prompt version")
 
+
+def make_dir_rec(path):
+    """
+    Creates directories along the given path if they do not exist.
+    Checks each folder and creates it when necessary.
+    """
+    # Normalize path for the system
+    path = os.path.normpath(path)
+    
+    # Build path folder-by-folder
+    current_path = ""
+    for folder in path.split(os.sep):
+        if current_path == "":
+            # Handle absolute paths: start with '/' or 'C:\'
+            current_path = folder
+            if os.name == 'nt' and len(folder) == 2 and folder[1] == ':':
+                # On Windows, 'C:' should remain intact
+                continue
+        else:
+            current_path = os.path.join(current_path, folder)
+        
+        # Check and create if does not exist
+        if not os.path.exists(current_path):
+            os.mkdir(current_path)
+            print(f"Created: {current_path}")
+
 """
 #Old testing
 if __name__ == "__main__":
