@@ -18,7 +18,7 @@ if __name__ == "__main__":
     VERSION_TO_USE = 3
     SELECTED_PROMPT_PATH = "src/ml_scam_detector/prompting/prompt_conner_v3.txt" if n_args < 2 else sys.argv[1]
     SELECTED_PROMPT_CONT_PATH = "src/ml_scam_detector/prompting/prompt_conner_v3_contd.txt" if n_args < 3 else sys.argv[2]
-    PATH_TO_CONV_DATA = "src/ml_scam_detector/data/call_data_by_conversation_conv_only.csv"
+    PATH_TO_CONV_DATA = "src/ml_scam_detector/data/call_data_by_conversation/raw_data/call_data_by_conversation_conv_only.csv"
 
     ######## MASTER SETTINGS - careful when adjusting these as they may have filesystem implications
     PROMPT_FILE_ID_SUBSTR = "prompt" # Assuming all prompt files contain kw: "prompt" somewhere in filename

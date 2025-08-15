@@ -26,7 +26,7 @@ def run_gemini_behavioral_analysis(
     with open(prompt_filepath, "r") as file:
         system_prompt = file.read()
 
-    conversations = pd.read_csv('src/ml_scam_detector/data/call_data_by_conversation.csv')
+    conversations = pd.read_csv('src/ml_scam_detector/data/call_data_by_conversation/raw_data/call_data_by_conversation.csv')
     conversations_small = conversations[:2]
 
     for index, row in conversations_small.iterrows():
