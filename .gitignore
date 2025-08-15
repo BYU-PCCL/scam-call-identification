@@ -28,3 +28,6 @@ TODO.txt
 
 # not sure what this was, need to figure out
 temp_test.py
+
+# no need to share tests for now
+tests/**
