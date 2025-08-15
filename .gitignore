@@ -16,3 +16,15 @@ src/ml_scam_detector/data/**
 
 # Ignore project structure folder, used to cat all files and file structure
 project_structure
+
+# Ignore these for now
+pyproject.toml
+
+# need to update
+requirements.txt
+
+# No need to share this
+TODO.txt
+
+# not sure what this was, need to figure out
+temp_test.py
