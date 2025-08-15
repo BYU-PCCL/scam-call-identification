@@ -34,5 +34,5 @@ if __name__ == "__main__":
 
     #print_df_values(df_conversations)
     
-    output_file = 'src/ml_scam_detector/data//call_data_by_conversation/raw_data/call_data_by_conversation_conv_only.csv'
+    output_file = 'src/ml_scam_detector/data//call_data_by_conversation/processed/call_data_by_conversation_conv_only.csv'
     df_conversations.to_csv(output_file, index=False)
