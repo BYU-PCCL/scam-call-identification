@@ -1,0 +1,2 @@
+Using JSON for settings which are more complex to organize setting info and subsettings
+Simply using python list for settings that are just a list of strings

@@ -1,0 +1,5 @@
+{
+    "supported_transcription_models": [
+        {"transcription_model_id_string": "gpt-4o-transcribe"}
+    ]
+}
