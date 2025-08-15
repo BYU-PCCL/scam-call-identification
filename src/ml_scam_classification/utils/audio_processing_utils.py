@@ -81,12 +81,12 @@ def convert_audio_object_to_supported_sampling_rate(
         err_context = "In convert_audio_object_to_supported_sampling_rate"
 ):
     
-    audio = AudioSegment.from_file(input_audio_file_path)
+    audio = AudioSegment.from_file(path_to_input_audio_file)
     new_sampling_rate = 16000 if audio.frame_rate > 8000 else 8000
     audio = audio.set_frame_rate(new_sampling_rate)
 
     # temporarily store audio file w/new sampling rate (same file format) in a folder
-    audio_format = get_audio_format(input_audio_file_path)
+    audio_format = get_audio_format(path_to_input_audio_file)
     audio.export("output.wav", format=audio_format)
 
 
@@ -119,7 +119,7 @@ def transcribe_audio_file(
     # Silero VAD (using to identify non-speech pauses) supports 8000 Hz and 16000 Hz sampling rates
     
     # Convert <= 8000 Hz files to 8000 Hz, and > 8000 Hz to 16000 to preserve as much audio information as possible
-    convert_audio_to_supported_sampling_rate
+    convert_audio_object_to_supported_sampling_rate
     audio = AudioSegment.from_file(input_audio_file_path)
     new_sampling_rate = 16000 if audio.frame_rate > 8000 else 8000
     audio = audio.set_frame_rate(new_sampling_rate)
