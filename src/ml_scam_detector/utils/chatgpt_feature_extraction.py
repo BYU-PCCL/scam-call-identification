@@ -9,6 +9,99 @@ from src.ml_scam_detector.utils.json_utils import is_json, convert_list_json_str
 
 from src.ml_scam_detector.utils.chatgpt_utils import start_conversation, continue_conversation
 
+import sys
+import os
+import time
+import pandas as pd
+from src.ml_scam_detector.utils.file_utils import read_file
+from src.ml_scam_detector.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
+from src.ml_scam_detector.utils.chatgpt_utils import (
+    start_conversation,
+    continue_conversation,
+    build_progress_message,
+    get_response_from_chatgpt,
+    extract_json_from_response,
+    estimate_remaining_lines
+)
+
+# -- Data Loading and Filename Generation --
+
+def load_transcripts(csv_path):
+    """Load transcripts from a CSV file."""
+    return pd.read_csv(csv_path)
+
+def generate_output_filename(base_filepath, transcript_index):
+    """Generate a unique filename for output using transcript index."""
+    base, ext = os.path.splitext(base_filepath)
+    return f"{base}_{str(transcript_index).zfill(5)}.json"
+
+# -- Transcript Processing --
+
+def process_transcript_into_behaviors_json(
+    transcript_text,
+    transcript_index,
+    main_prompt,
+    cont_prompt,
+    model,
+    role,
+    total_transcripts,
+    stop_index
+):
+    """
+    Process one transcript by:
+      1. Building the full prompt (main prompt + transcript text)
+      2. Starting the conversation and extracting the first JSON answer
+      3. Estimating how many extra responses (lines) are needed
+      4. Iteratively continuing the conversation to collect all JSON responses
+    Returns a list of JSON responses.
+    """
+    # Add call transcript to main instructions to get first full prompt
+    full_prompt = f"{main_prompt}\n\nCall Transcript:\n\n{transcript_text}"
+    
+    # Build progress message to print progress so far
+    progress_msg = build_progress_message(stop_index, total_transcripts, transcript_index)
+    print(progress_msg)
+    time.sleep(1)
+    print("Starting conversation... (may take up to 60 seconds)")
+    conversation = start_conversation(prompt=full_prompt, system_message=role, model=model, progress_message=progress_msg)
+    print("Started initial request via ChatGPT conversation.")
+    
+    # Get the first response from ChatGPT and extract the JSON
+    response = get_response_from_chatgpt(conversation)
+    json_parts = [extract_json_from_response(response)]
+    
+    # Estimate num additional responses required
+    # The prompt instructions may or may not ask for the num of lines, if it doesn't, it will estimate
+    print("Computing transcript lines remaining...")
+    remaining, is_estimated = estimate_remaining_lines(response, transcript_text)
+    print("N Transcript lines remaining obtained.")
+    
+    for line in range(remaining):
+        # Build a progress message saying how many lines left
+        progress_msg = build_progress_message(stop_index, total_transcripts, transcript_index, line, remaining, is_estimated)
+        print(progress_msg)
+
+        # get behaviors from each remaining line with separate prompt for each line (to avoid token limit)
+        conversation = continue_conversation(conversation, cont_prompt, model, progress_message=progress_msg)
+        response = get_response_from_chatgpt(conversation)
+
+        # If no response returned, exit
+        if not response.strip():
+            break
+
+        # get behavior jsons from chatgpt response
+        current_json = extract_json_from_response(response)
+        if not is_json(current_json):
+            raise ValueError("Extracted content is not valid JSON.")
+        json_parts.append(current_json)
+
+    return json_parts
+
+# -- Main Execution Function --
+
+# TODO - Transcript obj parameter w/transformation fn
+# TODO - add display loading
+
 
 def run_chatgpt_behavioral_analysis(
     prompt_filepath,

@@ -1,5 +1,6 @@
 import os
 import re
+import zipfile
 import numpy as np
 from dotenv import load_dotenv
 
@@ -8,6 +9,84 @@ def read_file(filepath):
     with open(filepath, "r") as file:
         file_contents = file.read()
     return file_contents
+
+
+# -------------------------------------------------------------------
+# List of recognized file extensions
+VALID_EXTS = ['.zip', '.txt', '.csv', '.json', '.xml']
+
+def assert_filename_ext_at_path(path, valid_exts):
+    """
+    Ensure that the filename at the given path has an extension in valid_exts.
+    Raises ValueError if the extension is not recognized.
+    """
+    _, ext = os.path.splitext(path)
+    ext = ext.lower()
+    if ext not in valid_exts:
+        raise ValueError(
+            f"Invalid file extension for path {path!r}. "
+            f"Expected one of {valid_exts}, got {ext!r}."
+        )
+
+
+def assert_path_exists(path, path_type, req_file_ext=None):
+    """
+    Assert that the given path exists and matches the specified type and extension.
+    
+    :param path: Path string to validate.
+    :param path_type: 'DIR' or 'FILE'.
+    :param req_file_ext: If path_type is 'FILE', ensure the file ends in this extension (e.g. '.zip').
+                          For 'DIR', req_file_ext should be None.
+    :raises TypeError: if path is not a string.
+    :raises FileNotFoundError: if the path does not exist or is the wrong type.
+    :raises ValueError: if path_type is invalid or the file extension mismatch.
+    """
+    if not isinstance(path, str):
+        raise TypeError(f"Path must be a string, got {type(path).__name__}")
+
+    if path_type == 'DIR':
+        if not os.path.isdir(path):
+            raise FileNotFoundError(f"Directory not found: {path!r}")
+    elif path_type == 'FILE':
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"File not found: {path!r}")
+        if req_file_ext is not None:
+            assert_filename_ext_at_path(path, [req_file_ext])
+    else:
+        raise ValueError(f"Invalid path_type {path_type!r}. Expected 'DIR' or 'FILE'")
+    
+
+def unzip_file(src_path, dest_dir, delete_zipped_file=False):
+    """
+    Unzip the .zip file at src_path into dest_dir.
+    
+    :param src_path: Path to the .zip file.
+    :param dest_dir: Directory to extract contents into.
+    :param delete_zipped_file: If True, remove the original .zip file after extraction.
+    :return: The destination directory path (dest_dir) upon successful extraction.
+    :raises: TypeError, FileNotFoundError, ValueError as raised by the checks above.
+    """
+    # 1. Validate source .zip file exists and has .zip extension
+    assert_path_exists(src_path, 'FILE', '.zip')
+    
+    # 2. Validate destination directory exists
+    assert_path_exists(dest_dir, 'DIR')
+    
+    # 3. Perform extraction
+    with zipfile.ZipFile(src_path, 'r') as zf:
+        zf.extractall(dest_dir)
+    
+    # 4. Optionally delete the original zip
+    if delete_zipped_file:
+        os.remove(src_path)
+    
+    # 5. Return the destination path
+    return dest_dir
+
+
+# Example usage:
+# unzipped_dir = unzip_file('/path/to/archive.zip', '/path/to/output/dir', delete_zipped_file=True)
+# print(f"Extracted archive to {unzipped_dir}")
 
 
 def find_repo_root():

@@ -2,6 +2,12 @@ from google import genai
 from src.ml_scam_detector.utils.file_utils import get_gemini_api_key
 from dotenv import load_dotenv
 
+def get_gemini_api_key():
+    load_dotenv()
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if not gemini_key:
+        raise ValueError("Please set the OPENAI_API_KEY environment variable")
+
 
 #run this file from the base of the repository
 key = get_gemini_api_key()

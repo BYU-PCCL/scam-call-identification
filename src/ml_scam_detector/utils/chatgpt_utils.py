@@ -260,6 +260,25 @@ def get_json_from_chatgpt_response(response_text):
     return json_only
 
 
+def estimate_remaining_lines(response_text, raw_transcript_text):
+    """
+    Estimate the number of remaining lines for further responses.
+    If the response contains a marker with the line count, use it;
+    otherwise, estimate based on the raw transcript.
+    Returns a tuple (remaining_lines, is_estimated).
+    """
+    marker = "Number of Lines in Cleaned Transcript in Total:"
+    if marker in response_text:
+        try:
+            count_str = response_text.split(marker)[1].strip().split()[0]
+            total_lines = int(count_str)
+            return total_lines - 1, False  # subtract 1 for the line already processed
+        except Exception:
+            pass
+    # Fallback estimate using the raw transcript length
+    estimated_lines = int(len(raw_transcript_text.splitlines()) * 1.5)
+    return estimated_lines, True
+
 # Example usage:
 if __name__ == "__main__":
     # Start a new conversation.
