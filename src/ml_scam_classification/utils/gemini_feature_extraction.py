@@ -7,6 +7,7 @@ import pandas as pd
 from google import genai
 from google.genai import types
 from src.ml_scam_classification.utils.file_utils import get_gemini_api_key, ensure_file_versioning_ok
+from src.ml_scam_classification.utils.llm_utils import get_json_from_llm_response
 
 def run_gemini_behavioral_analysis(
     prompt_filepath=None, 
@@ -26,7 +27,7 @@ def run_gemini_behavioral_analysis(
     with open(prompt_filepath, "r") as file:
         system_prompt = file.read()
 
-    conversations = pd.read_csv('src/ml_scam_classification/data/call_data_by_conversation/raw_data/call_data_by_conversation.csv')
+    conversations = pd.read_csv('src/ml_scam_classification/data/call_data_by_conversation/processed/call_data_by_conversation.csv')
     conversations_small = conversations[:2]
 
     for index, row in conversations_small.iterrows():
@@ -42,11 +43,13 @@ def run_gemini_behavioral_analysis(
         )
         print(response)
 
+        json = get_json_from_llm_response(response.text)
+
         output_file = response_writepath
 
         with open(output_file, "a") as file:
             # file.write('\n\n' + row['TEXT'] + "\n\n")
-            file.write(response.text)
+            file.write(json)
         
         print("(!!!) - WARNING - Rate limits not configured... waiting 1 min to be safe.")
         print("Configure rate limits before removing this warning and the exit() statement!")

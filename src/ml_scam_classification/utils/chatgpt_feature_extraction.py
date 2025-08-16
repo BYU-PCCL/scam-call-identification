@@ -23,6 +23,7 @@ from src.ml_scam_classification.utils.chatgpt_utils import (
     extract_json_from_response,
     estimate_remaining_lines
 )
+from src.ml_scam_classification.utils.llm_utils import get_json_from_llm_response
 
 # -- Data Loading and Filename Generation --
 
@@ -200,28 +201,8 @@ def run_chatgpt_behavioral_analysis(
         cout_log_info(5)
         cout_log_info(6)
 
-        # Validate that the response contains the expected JSON formatting.
-        # (In our design, we assume the assistant returns JSON wrapped between ```json\n and \n```.)
-        if "```json" not in response_text:
-            raise ValueError("Critical Error: Could not locate ```json in the response, meaning the response likely contains no valid json. Terminating.")
-        # Extract the JSON portion.
-        try:
-            json_and_rest = response_text.split("```json\n")[1]
-            json_only = json_and_rest.split("\n```")[0]
-        except IndexError:
-            if len(response_text) < 100 and ('done' in response_text or 'Done' in response_text):
-                print("WARNING - ChatGPT indicated it was done after only one line. This is fine so long as the current transcript is only one line, but please double check.")
-
-                cont = input("Continue (y/n)?")
-
-                if cont != "Y" and cont != "Y":
-                    return
-                
-                print("ChatGPT indicated it was done processing the transcript. Moving to the next transcript.")
-                continue
-            raise ValueError("Critical Error: JSON delimiters not found as expected in the response.")
-
-        first_json = json_only
+        # ensure response contains json
+        first_json = get_json_from_llm_response(response_text)
 
         cout_log_info(7)
 

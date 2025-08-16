@@ -4,7 +4,6 @@ import time
 from dotenv import load_dotenv
 from openai import OpenAI
 from src.ml_scam_classification.utils.file_utils import get_chatgpt_api_key
-from src.ml_scam_classification.utils.json_utils import is_json
 from src.ml_scam_classification.utils.cout_log_utils import cout_log_info
 
 def send_prompt_to_chatgpt(
@@ -234,30 +233,6 @@ def get_n_lines_for_progress_msg(response_text):
         n_lines_left_was_estimated_for_progress_msg = True
     
     return n_lines_left_to_process, n_lines_left_was_estimated_for_progress_msg
-
-
-def get_json_from_chatgpt_response(response_text):
-    if "```json" not in response_text:
-            raise ValueError("Critical Error: Could not locate ```json in the response, meaning the response likely contains no valid json. Terminating.")
-    # Extract the JSON portion.
-    try:
-        json_and_rest = response_text.split("```json\n")[1]
-        json_only = json_and_rest.split("\n```")[0]
-    except IndexError:
-        if len(response_text) < 100 and ('done' in response_text or 'Done' in response_text):
-            print("WARNING - ChatGPT indicated it was done after only one line. This is fine so long as the current transcript is only one line, but please double check.")
-
-            cont = input("Continue (y/n)?")
-
-            if cont != "Y" and cont != "Y":
-                return
-            
-            print("ChatGPT indicated it was done processing the transcript. Moving to the next transcript.")
-            return
-        raise ValueError("Critical Error: JSON delimiters not found as expected in the response.")
-    if not is_json(json_only):
-            raise ValueError("Critical Error: JSON not parsed correctly from ChatGPT response. Terminating.")
-    return json_only
 
 
 def estimate_remaining_lines(response_text, raw_transcript_text):

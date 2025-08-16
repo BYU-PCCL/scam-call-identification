@@ -28,13 +28,13 @@ if __name__ == "__main__":
     if n_args == 1:
         run_gemini_behavioral_analysis(
             prompt_filepath=SELECTED_PROMPT_PATH,
-            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out{VERSIONING_PREFIX}{str(VERSION_TO_USE)}.txt"
+            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out{VERSIONING_PREFIX}{str(VERSION_TO_USE)}.json"
             )
     elif n_args == 2:
         run_gemini_behavioral_analysis(sys.argv[1])
         run_gemini_behavioral_analysis(
             prompt_filepath=sys.argv[1],
-            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out{VERSIONING_PREFIX}{str(VERSION_TO_USE)}.txt"
+            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out{VERSIONING_PREFIX}{str(VERSION_TO_USE)}.json"
             )
     elif n_args == 3:
         run_gemini_behavioral_analysis(sys.argv[1], sys.argv[2])
