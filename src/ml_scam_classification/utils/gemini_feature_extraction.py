@@ -58,7 +58,7 @@ def run_gemini_behavioral_analysis(
 if __name__ == "__main__":
     # SETTINGS
     PROMPT_FOLDER_LOCATION = "src/ml_scam_classification/prompting"
-    VERSION_TO_USE = 3
+    VERSION_TO_USE = 7
     SELECTED_PROMPT_PATH = "src/ml_scam_classification/prompting/prompt_conner_v7.txt"
 
     ######## MASTER SETTINGS - careful when adjusting these as they may have filesystem implications
