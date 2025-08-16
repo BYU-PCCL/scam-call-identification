@@ -53,6 +53,7 @@ Finally, each JSON object must include a final attribute "raw_transcript_text" t
 
 Here is a summary of the type of behaviors you will be asked to look for:
 Type Label        Description of Type
+A                 Utterance Type
 A                 Classification of informational statements (facts/opinions)
 B                 Statements about previous statements from the other speaker
 C                 Statements about previous statements from speaker themselves
@@ -65,6 +66,9 @@ For example, the JSON for one segment might be:
   "transcript_segment": "Good morning, this is [Your Name]'s personal assistant. How can I assist you today?",
   "speaker": "Receiver",
   "behaviors_exhibited": {
+    "1A": { "analysis": "}
+
+
     "1A": { "analysis": "A true fact is stated.", "was_identified": 0 },
     "1B": { "analysis": "An opinion/belief is stated which could be reasonably proven or disproven", "was_identified": 0},
     "1B": { "analysis": "An opinion/belief is stated which could NOT be reasonably proven or disproven", "was_identified": 0},
