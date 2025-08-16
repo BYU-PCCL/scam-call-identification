@@ -38,3 +38,11 @@ e.g. "If you don't X we will have to Y"
 Common Emotionally-Charged Words e.g. "If you don't
 
 IDEA - maybe make it a chunk that contains only one subject, with side chains that connect it and reference it to previous subjects (like -1, -2, etc in a graph in its type and references to previous subjects, and the context window is a certain size)
+
+
+_____________________________________________________
+|                                                    |
+|                         V 7                        |
+|____________________________________________________|
+
+Just doing my behavioral framework plus the scam behaviors for simplicity for an MVP to get to a first version fast

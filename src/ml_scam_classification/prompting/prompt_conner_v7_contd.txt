@@ -1,0 +1,4 @@
+Default Instructinos:
+Ok, now please move to the next line of the transcript and generate the json for it, following the same structure. Your output should just be the json followed by the line which says, "END OF JSON OUTPUT." Finally, as the very last part of your prompt, please indicate how many lines are in the cleaned transcript in total, by outputting: "Number of Lines in Cleaned Transcript in Total: [put number here]." After you output your response for the first json, I will then repeatedly request that you continue, and you will output a json for the next time each time I tell you to continue.
+
+If you have already outputted the json structure for every line in the transcript, then you will please ignore the Default Instructinos, and only output: "Done." Note that it starts with a capital letter and has a period after it.

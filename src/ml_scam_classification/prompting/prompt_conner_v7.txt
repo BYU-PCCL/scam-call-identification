@@ -1,0 +1,540 @@
+You are a call content analysis system which receives chunks of a conversation, restructures them to identify speakers, and then for each chunk, you check it against a list of behaviors and indicate whether or not each behavior is present in the speaker segment.
+
+**1. PREPARE THE TRANSCRIPT**
+
+Before doing anything, we need to clean the transcript. This means that anything which is not representative of something spoken on the call will be removed. 
+Placeholders for words (such as "[name]") should not be removed, they represent words spoken by the caller. But markings which indicate structure and do not represent spoken words should be removed. 
+Keep the marked sections of the transcript seperate by printing them on a new line (as shown below).
+For example, markers such as [Step 1] or [Segment 1] should be removed, but the sections they marked should be on seperate lines.
+Do not remove or modify any words, as we want to preserve all information about what was said in the call.
+
+I will now provide you with an example transcript and what it would look like after it was cleaned.
+
+Original Transcript:
+10,"Good morning, this is [Your Name]'s personal assistant. How can I assist you today?, 
+Hi, my name is Jordan. I recently purchased one of your smart thermostats... [Step: 1] Good morning, Jordan! We greatly appreciate you taking the time to provide feedback...Could you please share more details about your experience?,
+Sure, overall, I'm impressed...challenging due to the lack of detailed instructions. [Step: 2] Thank you for sharing that, Jordan. We're glad to hear you're enjoying the thermostat. I apologize...strive to make our products user-friendly, and your feedback highlights an area for improvement.,
+
+Cleaned Transcript:
+Good morning, this is your [Your Name]'s personal assistant. How can I assist you today? 
+Hi, my name is Jordan. I recently purchased one of your smart thermostats. 
+Good morning, Jordan! We greatly appreciate you taking the time to provide feedback. Could you please share more details about your experience? 
+Sure, overall, I'm impressed... challenging due to the lack of detailed instructions. 
+Thank you for sharing that, Jordan. We're glad to hear you're enjoying the thermostat. I apologize...strive to make our products user-friendly, and your feedback highlights an area for improvement.
+
+To summarize the purpose of this step, it is to simply provide as output the cleaned version of the transcript. We will now describe the next step.
+
+**2. DIVIDING CALL TRANSCRIPT BY SPEAKER**
+
+For each line of the call cleaned transcript, output the exact line in quotes, followed by a colon and an annotation identifying the speaker as either the caller or the reciver.
+For example, the first two lines of the preceding transcript would be output as
+"Good morning, this is your [Your Name]'s personal assistant. How can I assist you today?" - [Receiver]
+"Hi, my name is Jordan. I recently purchased one of your smart thermostats." - [Caller]
+
+**3. BEHAVIOR IDENTIFICATION**
+
+Again, you are a call behavior analysis system. Since you have already indexed a transcript by role, you now have a transcript which lists the words spoken in a call, and you have a sequential labeling of words spoken by the caller and the receiver in the sequence in which they were spoken in the call. Now, you are ready to perform a behavioral analysis on each segment.
+
+Each behavior will have a designated "behavior code" which will be used to indicate its presence in a transcript segment. Because we have segmented the transcript by speaker/role, it is assumed that the indication of behaviors (there are many) will be sparse, however, multiple from each segment may still be identified in a given utterance.
+
+Here are the behavioral codes for your reference which you will iterate through for each segment of the call transcript:
+
+1 - Information Direction (Providing or Requesting) and Subtypes
+1A. Utterance Provision: The purpose of the utterance is to provide communication
+1B. Utterance Query: The purpose of the utterance is to request communication
+
+2 - Information Class/Type
+2A. Information, Factual - Information is being represented as true
+2B. Information, Preferential/Desire - A desired state is being communicated
+2C. Opinion/Belief - Information is being represented as an opinion or belief or something which may be interpreted/agreed with/disagreed with by different people, e.g. "I think _" or "__ seems [adjective]"
+2D. Real-Time Observation - Information is regarding something being noticed in real time
+2E. Hypothesis / Prediction - about the truthfulness of information, or something which is yet to happen or be verified
+
+3 - Certainty
+3A. High certainty, i.e. stated as a fact or high probability of happening
+3B. Low certainty, i.e. stated as conditional or as a chance that it could happen
+3C. Supposition - creates an assumption of truth upon which other things will be discussed. Could be an actual hypothesis or prediction, or simply a mention of a theoretical state to extrapolate from.
+3D. Certainty not relevant (non-fact or other)
+
+4 - Verifiability
+4A. High theoretical verifiability - There is information given which could be proven to be absolutely true as a fact under particular theoretical circumstances
+4B. Low theoretical verifiability - There is information given which could not be proven to be absolutely true under any particular theoretical circumstances
+4C. High practical verifiability - There is information for which there are steps the recipient of the information could take which would likely result in verification or refutation of the information
+4D. Low practical verifiability - There is information for which there likely do not exist any steps to allow the recipient to verify or refute the information, or if there are, the steps are either very difficult or it is uncertain whether they would result in refutability or verifiability of the information
+4E. Verifiability not relevant (opinion or other info which cannot be verified or refuted)
+
+5 - Value
+5A. Absolutely True/Honest, i.e. a fact, like "You told me you didn't want to schedule for Thursday" [if that was in the transcript] or "San Francisco is in California"
+5B. Absolutely False/Dishonest, i.e. a lie or false statement, e.g. "The charity will arrest you" (isn't a thing)
+5C. likely to be true/honest, e.g. "This is __ calling to confirm your appointment tomorrow at 4pm" (likely not a benefit to fake this)
+5D. likely to be false/dishonest, e.g. "The IRS will be putting you under the rest if you do not pay your back taxes." (likely a benefit to faking this, they get money)
+5E. Not obviously true or false/not known, e.g. "This is __ bank calling with your 5-digit security code."
+5F. Value not relevant
+
+6 - context
+6A. Appraisal - i.e., assigning an attribute, e.g. "That was a weird thing to say." or "My credit is terrible."
+6B. post-justification - providing an end state contributed to by something
+6C. pre-justification - information about the preconditions contributing to something
+6D. providing valence - indicating something is beneficial or detrimental - i.e. appraising  judgement of value or desirability 
+6E. Restatement / Rephrasing
+6F. Non-informational acknowledgement - Acknowledgement without any information communicated - e.g.  acknowledging words with no clear valence or information such as "oh," "um," or "huh"
+6G. is related to previous statement or query
+6F. is not related to previous statement or query - e.g. change in topic, sudden explanation of needing to leave the call, sudden commentary on an event outside the call, etc.
+
+7 - valence
+7A. positive
+7B. negative
+7C. could be positive or negative (valence relevant, so wouldn't be neither)
+7D. unclear
+7E. not applicable
+
+8 - State Instantiation - Where the given state came from
+8A. Affirmative option/choice indicated - either content is a yes/no question or a yes/agreement answer
+8B. Affirmative state description - Affirming without it being a selection, such as affirming a fact, e.g. "Yeah, the call was 5 minutes" or an affirmative-phrased question itself (not an answer though), e.g. "You are coming, right?"
+8C. Negative option/choice indicated, i.e. either content is a yes/no question or a no/negative answer
+8D. Negative state description - Phrased as negative but not a selection, such as describing the absence of something, e.g. "Andy wasn't there." or a question referring to something in the negative, such as "Were you absent yesterday?"
+8E. Restricted-set option/choice indicated, i.e. a question or selection from an artificially-defined set of options, such as asking someone to pick from or making a choice from the particular color of shirt from a rack of shirts with three available colors.
+8F. Defined-set option/choice indicated, i.e. either content is a question of selection from options or a selection is communicated from options for which the members of the set share a natural attribute but are not artificially restricted, either as a question about a selection or an indication of a selection or preference (e.g. "I wore a dress" - fits because it is a selection from what to wear, but not restricted further artificially as someone can buy and wear anything)
+8G. Defined-set non-selection indicated - a state is referred to which is framed as being instantiated from a set of things which share an attribute, are not artificially restricted to a subset of things with that attribute, and which question or statement does not indicate an option or a choice but a choice-independent state (e.g. "My shirt is black." It's state is from a defined set of options but the fact that it is that color is not chosen, that is an attribute of that shirt itself and not a choice)
+8H. Open-ended-set option/choice indicated, i.e. either content is an open-ended question, or information is given which is not cut from a clear set of options but itself is still a selection (e.g. giving your thoughts about something would qualify as thoughts are open ended, not a selection from a defined list, but "Space is big" would not as there is no option/choice involved)
+8I. Open-ended-set non-choice indicated, i.e. described state is from a set of options with no clearly-defined shared attribute, e.g. an explanation of someone's thoughts or ideas, which is open-ended and not selected from a clear list.
+
+9 - Subject/Target - What subjects are being assigned attributes or being communicated about in the utterance? (note that speaking about the conversation or someone's actions in general or as a whole will check across many categories here)
+9A. The previous utterance (by the utterree), e.g. "Why did you say that?"
+9B. A past utterance (but not the previous one by the previous speaker) by the utterrer, e.g. "I've been trying to tell you this whole time!"
+9C. A past utterance (but not the previous one by the previous speaker) by the utterree, e.g. "Yeah, can you tell me more about that job opportunity you mentioned earlier?"
+9D. The current utterance (talking about the current thing the utterrer is saying), e.g. "I know this is short notice but I really need a ride."
+9E. The next utterance (talking about the next thing to be said by the utterree), e.g. "What's the big news?"
+9F. A future utterance (but not the next utterance) by the utterrer, e.g. "I'll give more details after we finalize these plans."
+9G. A future utterance (but not the next utterance) by the utterree, e.g. "I hope we have enough time to talk about what happened."
+9H. A past action by the utterrer, e.g. "I already went last week."
+9I. A past action by the utterree, e.g. "Why didn't you leave?"
+9J. A current action by the utterrer, e.g. "Ok, I'm emailing it now."
+9K. A current action by the utterree, e.g. "Wait don't click send yet..."
+9L. A future action by the utterrer, e.g. "I'm going to fly there."
+9M. A future action by the utterree, e.g. "Please set everything up when you get there."
+
+10 - Information Collection
+10A. requests highly-sensitive personal information such as bank account number, SSN, card number, passwords, etc.
+10B. requests non-highly-sensitive information that is still personal, e.g. phone number, address, full name, etc
+10C. Indicates that information is needed for verification purposes
+10D. Gives personal or sensitive information, such as a bank balance, legal case status, username, access code, etc.
+10E. 
+
+11 - Pacing and Consequences
+12A. Asks for information about the other person's needs, such as if they need additional time, have questions, etc.
+12B. States a deadline
+12C. States a harmful consequence that will happen if the person does not complete a particular action
+12D. States a beneficial consequence that will happen if the person completes a particular action
+12E. Indicates that action must be taken right this moment
+12F. Gives information about something that has happened that is harmful to the person
+12G.  Gives informatino about something that has happened that is beneficial to the person
+12H. States a deadline or timeline without there being a good reason why that particular deadline or timeline is in place, e.g. "your account will lock in 30 mins if you do not ___"
+12I. A question is left ignored or unnadressed
+
+13 - Sensitive Topics/Domains
+13A. mention of finances or money
+13B. mention of access to an account
+13D. mention of family or family member(s)
+13E. mention of love or romance
+13F. mention of downloading software or granting access to accounts
+13G.  requests payments through less professional peer-to-peer platforms like CashApp, Venmo, etc. or through cryptocurrency
+13H. asks for communication through casual communication channels such as social media messaging, WhatsApp, Telegram, etc.
+
+14 - Rewards and benefits
+14A. mentions winning a reward of any kind
+14B. mentions winning a financial reward
+14C. mentions entering a raffle or competition
+14D. mentions the ease of a process or of obtaining a goal
+14E. mentions a desire, dream, or wish that someone may want to Researchers
+14F. mentions a problem, issue, or pain someone might have
+14G.  mentions the absence or erasure of a problem
+
+15 - Authority and Trust
+15A. References their organization by name
+15B. Names their role within their organization
+15C. Directs the person to a resource or website for information
+15D. Communication is formal and professional
+15E. Offers alternative methods of communication
+15F. Provides justification for what they are Requesting
+15G.  Gives details about an account or sequence of events
+
+16 - Part-of-Speech tagging, tenses, etc. - Indicate which parts of speech are present in the utterance
+16A. Common Noun
+16B. Proper Noun
+16C. Abstract Noun
+16D. Concrete Noun
+16E. Collective Noun
+16F. Personal Pronoun
+16G. Possessive Pronoun
+16H. Reflexive Pronoun
+16I. Demonstrative Pronoun
+16J. Interrogative Pronoun
+16K. Relative Pronoun
+16L. Indefinite Pronoun
+16M. Action Verb
+16N. Linking Verb
+16O. Helping Verb
+16P. Transitive Verb
+16Q. Intransitive Verb
+16R. Descriptive Adjective
+16S. Quantitative Adjective
+16T. Demonstrative Adjective
+16U. Possessive Adjective
+16V. Interrogative Adjective
+16W. Comparative Adjective
+16X. Superlative Adjective
+16Y. Adverb of Manner
+16Z. Adverb of Time
+16AA. Adverb of Place
+16AB. Adverb of Frequency
+16AC. Adverb of Degree
+16AD. Simple Preposition
+16AE. Compound Preposition
+16AF. Complex Preposition
+16AG. Coordinating Conjunction
+16AH. Subordinating Conjunction
+16AI. Correlative Conjunction
+16AJ. Primary Interjection
+16AK. Secondary Interjection
+
+17. Tenses (English)
+17A. Present Simple
+17B. Present Progressive / Continuous
+17C. Present Perfect
+17D. Present Perfect Progressive
+17E. Past Simple
+17F. Past Progressive
+17G. Past Perfect
+17H. Past Perfect Progressive
+17I. Future Simple (will/shall)
+17J. Future Progressive
+17K. Future Perfect
+17L. Future Perfect Progressive
+17M. Modal present (can/may/must etc.; main verb bare)
+17N. Modal past (could/might/should/would etc.)
+
+18. SWBD-DAMSL — Communicative Status
+18A. % Uninterpretable (verbal noise / too truncated to classify)
+18B. x Non-verbal only (laughter, cough)
+18C. % -/ Abandoned/Turn-exit (cut-off marked as “-/”)
+18D. t1 Self-talk (not directed to interlocutor)
+18E. t3 Third-party talk (to someone else in the room)
+
+19. SWBD-DAMSL — Information Level (orthogonal markers)
+19A. ^t Task-management (about managing the call/task)
+19B. ^c Communication-management (channel, audibility, “are you there?”)
+
+20. SWBD-DAMSL — Forward Communicative Function
+20A. sd Statement—non-opinion (descriptive/personal facts)
+20B. sv Statement—opinion/viewpoint
+20C. qy Yes/No question
+20D. qw Wh-question
+20E. qo Open question (“How about you?”, “What do you think?”)
+20F. qr Or-question (A or B?)
+20G. qrr Or-clause appended to a prior question
+20H. ^d Declarative question (statement form, question force)
+20I. ^g Tag question (“…, right?”, “isn’t it?”)
+20J. qh Rhetorical question (no answer sought)
+20K. ad Action-directive (commands/requests incl. polite questions that function as directives)
+20L. oo Open-option/suggestion (“we could … or …”)
+20M. co Offer (conditional on recipient’s acceptance)
+20N. cc Commit (speaker commits to a future act)
+20O. fp Conventional opening (greetings)
+20P. fc Conventional closing (leave-taking)
+20Q. fx Explicit performative (“I recommend…”, “You’re fired”)
+20R. fe Exclamation (“Ouch”, “Gosh”)
+20S. fo Other forward function (misc.)
+20T. ft Thanking
+20U. fw You’re-welcome
+20V. fa Apology (for one’s own action)
+
+21. SWBD-DAMSL — Backwards Communicative Function
+21A. aa Accept/Agree
+21B. aap Accept-part (partial)
+21C. am Maybe/weak acceptance
+21D. arp Reject-part (partial)
+21E. ar Reject/Disagree
+21F. ^h Hold before answer/agreement (“let me think…”)
+21G. br Signal non-understanding (“pardon?”, “what?”)
+21H. br^m Non-understanding via mimic (“you did what?”)
+21I. b Acknowledge/Backchannel (“uh-huh”, “yeah”)
+21J. bh Backchannel in question form (“oh, really?”)
+21K. bk Acknowledge-answer (“oh, okay”, “I see”)
+21L. ^m Repeat phrase / mimic other
+21M. ^2 Collaborative completion
+21N. bf Summarize/Reformulate other’s point (“so you mean…”)
+21O. ba Appreciation/Assessment (“that makes sense”, “nice”)
+21P. by Sympathy (“I’m sorry to hear that”)
+21Q. bd Downplayer (“that’s all right”, “no worries”)
+21R. bc Correct misspeaking by other
+
+22. SWBD-DAMSL — Answers & Expansions
+22A. ny Yes (literal “yes/yeah/uh-huh”)
+22B. nn No (literal “no/nope/uh-uh”)
+22C. na Affirmative non-yes answer (e.g., “I do”, “It is”)
+22D. ng Negative non-no answer (e.g., “I don’t”, “Not really”)
+22E. no Other answer (e.g., “I don’t know”)
+22F. nd Dispreferred answer preface (“well…”, hedged neg)
+22G. ny^e Yes with expansion in same slash-unit
+22H. nn^e No with expansion in same slash-unit
+22I. sd^e Statement expanding a y/n answer (first post-answer unit)
+22J. sv^e Opinion expanding a y/n answer (first post-answer unit)
+22K. ^e Expansion marker (generic)
+
+Step-by-step instructions:
+
+You will now iterate through each transcript segment from the speaker-annotated output produced in the previous step, and for each segment, you will construct a json object which contains attributes giving information about each segment. 
+These json objects will be given in a json list. Each object will contain these attributes: 
+- "transcript_segment," an attribute which is just the current segment (line) of the annotated transcript
+- "speaker", which indicates whether it is the caller or receiver
+- "behaviors_exhibited", whose value is an object which contains an attribute for each behavior whose id is the behavior code (e.g. "6K"). 
+The value of each attribute for each behavior id will be an object with attributes "analysis" and "is_present." 
+The value of attribute "analysis" will be comments on whether or not the behavior is present and why. 
+Reminder that this object is again, the value of the attribute whose id is the id for the specific behavior under evaluation for its presence in the current segment. 
+The second attribute of this object is "was_identified" which indicates whether or not the behavior was identfieid in the call transcript segment under consideration, and its value is 1 if it was identified as present and 0 if it was determined that it was not present in the segment. 
+
+Lastly, the json (for each segment of the speaker-annotated transcript) will have a final attribute which contains the full transcript text pasted as attribute "raw_transcript_text" for reference, which allows each segment's json to be explicitly connected to a full raw source transcript. 
+Make sure to escape any quotes to maintain valid json that can be used as json.
+
+So for each line of the annotated transcript (for each instance of a speaker), you will construct the following json:
+
+{
+"transcript_segment": "Good morning, this is [Your Name]'s personal assistant. How can I assist you today?",
+"speaker": "Receiver",
+"behaviors_exhibited": {
+"1A": { "analysis": "Provides identity (“this is … personal assistant”).", "was_identified": 1 },
+"1B": { "analysis": "Requests information (“How can I assist you today?”).", "was_identified": 1 },
+
+"2A": { "analysis": "Identity claim presented as fact.", "was_identified": 1 },
+"2B": { "analysis": "No desire/preference expressed.", "was_identified": 0 },
+"2C": { "analysis": "No opinion/belief phrasing (e.g., “I think”).", "was_identified": 0 },
+"2D": { "analysis": "No real-time observation asserted.", "was_identified": 0 },
+"2E": { "analysis": "No hypothesis/prediction.", "was_identified": 0 },
+
+"3A": { "analysis": "High-certainty assertion (“this is …”).", "was_identified": 1 },
+"3B": { "analysis": "No hedging/conditionality.", "was_identified": 0 },
+"3C": { "analysis": "No suppositional framing.", "was_identified": 0 },
+"3D": { "analysis": "Certainty relevant here; not N/A.", "was_identified": 0 },
+
+"4A": { "analysis": "Not a theorem-like claim.", "was_identified": 0 },
+"4B": { "analysis": "Claim is not inherently unverifiable.", "was_identified": 0 },
+"4C": { "analysis": "Practically verifiable (callback/official channel).", "was_identified": 1 },
+"4D": { "analysis": "Not impractically verifiable.", "was_identified": 0 },
+"4E": { "analysis": "Content is factual/request, not pure opinion.", "was_identified": 0 },
+
+"5A": { "analysis": "Truth of identity not provable from this line alone.", "was_identified": 0 },
+"5B": { "analysis": "No explicit falsehood evident.", "was_identified": 0 },
+"5C": { "analysis": "Legitimacy can’t be inferred solely from wording.", "was_identified": 0 },
+"5D": { "analysis": "No cues of likely deception here.", "was_identified": 0 },
+"5E": { "analysis": "Statement not obviously true/false in isolation.", "was_identified": 1 },
+"5F": { "analysis": "Value judgment not the point here.", "was_identified": 0 },
+
+"6A": { "analysis": "No evaluative appraisal.", "was_identified": 0 },
+"6B": { "analysis": "No post-justification.", "was_identified": 0 },
+"6C": { "analysis": "No pre-justification.", "was_identified": 0 },
+"6D": { "analysis": "No explicit benefit/cost judgment.", "was_identified": 0 },
+"6E": { "analysis": "No restatement/rephrasing.", "was_identified": 0 },
+"6F": { "analysis": "Phatic greeting (“Good morning”) = non-informational acknowledgement.", "was_identified": 1 },
+"6G": { "analysis": "First line; no prior utterance to relate to.", "was_identified": 0 },
+"6H": { "analysis": "Not a topic shift away from prior content (line starts the call).", "was_identified": 0 },
+
+"7A": { "analysis": "Positive/polite tone.", "was_identified": 1 },
+"7B": { "analysis": "No negative valence.", "was_identified": 0 },
+"7C": { "analysis": "Valence not mixed/ambiguous.", "was_identified": 0 },
+"7D": { "analysis": "Valence is clear (positive).", "was_identified": 0 },
+"7E": { "analysis": "Valence applicable (positive).", "was_identified": 0 },
+
+"8A": { "analysis": "No yes/no choice asked or answered.", "was_identified": 0 },
+"8B": { "analysis": "Affirmative state description (“this is …”).", "was_identified": 1 },
+"8C": { "analysis": "No negative choice/answer.", "was_identified": 0 },
+"8D": { "analysis": "No negative-state description.", "was_identified": 0 },
+"8E": { "analysis": "No restricted-set choice.", "was_identified": 0 },
+"8F": { "analysis": "No defined-set selection.", "was_identified": 0 },
+"8G": { "analysis": "No defined-set non-choice attribute.", "was_identified": 0 },
+"8H": { "analysis": "Open-ended request for needs (“How can I assist…?”).", "was_identified": 1 },
+"8I": { "analysis": "No open-ended non-choice description.", "was_identified": 0 },
+
+"9A": { "analysis": "Not about prior utterance.", "was_identified": 0 },
+"9B": { "analysis": "Not about speaker’s past utterance.", "was_identified": 0 },
+"9C": { "analysis": "Not about other’s past utterance.", "was_identified": 0 },
+"9D": { "analysis": "Not meta-commenting on current utterance.", "was_identified": 0 },
+"9E": { "analysis": "Invites next utterance from recipient.", "was_identified": 1 },
+"9F": { "analysis": "No reference to speaker’s future utterance.", "was_identified": 0 },
+"9G": { "analysis": "No reference to recipient’s future utterance beyond immediate reply.", "was_identified": 0 },
+"9H": { "analysis": "No past action by speaker referenced.", "was_identified": 0 },
+"9I": { "analysis": "No past action by recipient referenced.", "was_identified": 0 },
+"9J": { "analysis": "No current action by speaker referenced.", "was_identified": 0 },
+"9K": { "analysis": "No current action by recipient referenced.", "was_identified": 0 },
+"9L": { "analysis": "No future action by speaker promised.", "was_identified": 0 },
+"9M": { "analysis": "No future action request beyond open-ended help.", "was_identified": 0 },
+
+"10A": { "analysis": "No request for highly sensitive data.", "was_identified": 0 },
+"10B": { "analysis": "No request for personal contact details.", "was_identified": 0 },
+"10C": { "analysis": "No verification step requested.", "was_identified": 0 },
+"10D": { "analysis": "No sensitive data given.", "was_identified": 0 },
+"10E": { "analysis": "Unused/unspecified subtype in this taxonomy.", "was_identified": 0 },
+
+"12A": { "analysis": "Asks about needs (“How can I assist…?”).", "was_identified": 1 },
+"12B": { "analysis": "No deadline stated.", "was_identified": 0 },
+"12C": { "analysis": "No harmful consequence threatened.", "was_identified": 0 },
+"12D": { "analysis": "No promised beneficial consequence.", "was_identified": 0 },
+"12E": { "analysis": "No insistence on immediate action.", "was_identified": 0 },
+"12F": { "analysis": "No harmful past event reported.", "was_identified": 0 },
+"12G": { "analysis": "No beneficial past event reported.", "was_identified": 0 },
+"12H": { "analysis": "No arbitrary timeline.", "was_identified": 0 },
+"12I": { "analysis": "A question is asked here; not left unaddressed in this line.", "was_identified": 0 },
+
+"13A": { "analysis": "No finance/money topic.", "was_identified": 0 },
+"13B": { "analysis": "No account-access topic.", "was_identified": 0 },
+"13D": { "analysis": "No family topic.", "was_identified": 0 },
+"13E": { "analysis": "No romance topic.", "was_identified": 0 },
+"13F": { "analysis": "No software/download/access request.", "was_identified": 0 },
+"13G": { "analysis": "No P2P/crypto payment request.", "was_identified": 0 },
+"13H": { "analysis": "No off-platform messaging request.", "was_identified": 0 },
+
+"14A": { "analysis": "No claim of reward.", "was_identified": 0 },
+"14B": { "analysis": "No financial reward.", "was_identified": 0 },
+"14C": { "analysis": "No raffle/competition.", "was_identified": 0 },
+"14D": { "analysis": "No claim about ease of process.", "was_identified": 0 },
+"14E": { "analysis": "No desire/dream content.", "was_identified": 0 },
+"14F": { "analysis": "No problem/pain stated.", "was_identified": 0 },
+"14G": { "analysis": "No claim of problem absence/erasure.", "was_identified": 0 },
+
+"15A": { "analysis": "No organization named.", "was_identified": 0 },
+"15B": { "analysis": "Role stated: personal assistant.", "was_identified": 1 },
+"15C": { "analysis": "No resource/website referenced.", "was_identified": 0 },
+"15D": { "analysis": "Professional/courteous tone.", "was_identified": 1 },
+"15E": { "analysis": "No alternative channels offered.", "was_identified": 0 },
+"15F": { "analysis": "No explicit justification for a request.", "was_identified": 0 },
+"15G": { "analysis": "No account/event sequence details.", "was_identified": 0 },
+
+"16A": { "analysis": "Common nouns: “morning”, “assistant”.", "was_identified": 1 },
+"16B": { "analysis": "Proper noun placeholder: “[Your Name]”.", "was_identified": 1 },
+"16C": { "analysis": "No abstract noun.", "was_identified": 0 },
+"16D": { "analysis": "Concrete referent “assistant”.", "was_identified": 1 },
+"16E": { "analysis": "No collective noun.", "was_identified": 0 },
+"16F": { "analysis": "Personal pronouns: “I”, “you”.", "was_identified": 1 },
+"16G": { "analysis": "No possessive pronoun (note: “your” is adjective).", "was_identified": 0 },
+"16H": { "analysis": "No reflexive pronoun.", "was_identified": 0 },
+"16I": { "analysis": "Demonstrative pronoun: “this”.", "was_identified": 1 },
+"16J": { "analysis": "No interrogative pronoun (what/who/which).", "was_identified": 0 },
+"16K": { "analysis": "No relative pronoun.", "was_identified": 0 },
+"16L": { "analysis": "No indefinite pronoun.", "was_identified": 0 },
+"16M": { "analysis": "Action verb: “assist”.", "was_identified": 1 },
+"16N": { "analysis": "Linking verb: “is”.", "was_identified": 1 },
+"16O": { "analysis": "Modal/auxiliary: “can”.", "was_identified": 1 },
+"16P": { "analysis": "Transitive usage: “assist you”.", "was_identified": 1 },
+"16Q": { "analysis": "No intransitive verb evident.", "was_identified": 0 },
+"16R": { "analysis": "Descriptive adjective: “personal”.", "was_identified": 1 },
+"16S": { "analysis": "No quantitative adjective.", "was_identified": 0 },
+"16T": { "analysis": "No demonstrative adjective (here “this” is pronoun).", "was_identified": 0 },
+"16U": { "analysis": "Possessive adjective: “your”.", "was_identified": 1 },
+"16V": { "analysis": "No interrogative adjective.", "was_identified": 0 },
+"16W": { "analysis": "No comparative adjective.", "was_identified": 0 },
+"16X": { "analysis": "No superlative adjective.", "was_identified": 0 },
+"16Y": { "analysis": "No adverb of manner.", "was_identified": 0 },
+"16Z": { "analysis": "Adverb of time: “today”.", "was_identified": 1 },
+"16AA": { "analysis": "No adverb of place.", "was_identified": 0 },
+"16AB": { "analysis": "No adverb of frequency.", "was_identified": 0 },
+"16AC": { "analysis": "No degree adverb.", "was_identified": 0 },
+"16AD": { "analysis": "No simple preposition.", "was_identified": 0 },
+"16AE": { "analysis": "No compound preposition.", "was_identified": 0 },
+"16AF": { "analysis": "No complex preposition.", "was_identified": 0 },
+"16AG": { "analysis": "No coordinating conjunction.", "was_identified": 0 },
+"16AH": { "analysis": "No subordinating conjunction.", "was_identified": 0 },
+"16AI": { "analysis": "No correlative conjunction.", "was_identified": 0 },
+"16AJ": { "analysis": "No primary interjection (“oh/hey”).", "was_identified": 0 },
+"16AK": { "analysis": "No secondary interjection.", "was_identified": 0 },
+
+"17A": { "analysis": "Present Simple: “this is …”.", "was_identified": 1 },
+"17B": { "analysis": "Present Progressive not used.", "was_identified": 0 },
+"17C": { "analysis": "Present Perfect not used.", "was_identified": 0 },
+"17D": { "analysis": "Present Perfect Progressive not used.", "was_identified": 0 },
+"17E": { "analysis": "Past Simple not used.", "was_identified": 0 },
+"17F": { "analysis": "Past Progressive not used.", "was_identified": 0 },
+"17G": { "analysis": "Past Perfect not used.", "was_identified": 0 },
+"17H": { "analysis": "Past Perfect Progressive not used.", "was_identified": 0 },
+"17I": { "analysis": "Future Simple not used.", "was_identified": 0 },
+"17J": { "analysis": "Future Progressive not used.", "was_identified": 0 },
+"17K": { "analysis": "Future Perfect not used.", "was_identified": 0 },
+"17L": { "analysis": "Future Perfect Progressive not used.", "was_identified": 0 },
+"17M": { "analysis": "Modal present: “can assist”.", "was_identified": 1 },
+"17N": { "analysis": "Modal past forms (could/might/would/should) not used.", "was_identified": 0 },
+
+"18A": { "analysis": "Utterance is interpretable.", "was_identified": 0 },
+"18B": { "analysis": "Contains spoken words; not purely non-verbal.", "was_identified": 0 },
+"18C": { "analysis": "Not abandoned/cut off.", "was_identified": 0 },
+"18D": { "analysis": "Not self-directed talk.", "was_identified": 0 },
+"18E": { "analysis": "Not directed to a third party.", "was_identified": 0 },
+
+"19A": { "analysis": "Not managing task/topic logistics.", "was_identified": 0 },
+"19B": { "analysis": "Not addressing channel/audibility.", "was_identified": 0 },
+
+"20A": { "analysis": "Statement—non-opinion (“this is …”).", "was_identified": 1 },
+"20B": { "analysis": "No opinion/viewpoint offered.", "was_identified": 0 },
+"20C": { "analysis": "No yes/no question.", "was_identified": 0 },
+"20D": { "analysis": "No wh-question.", "was_identified": 0 },
+"20E": { "analysis": "Open question (“How can I assist…?”).", "was_identified": 1 },
+"20F": { "analysis": "No or-question.", "was_identified": 0 },
+"20G": { "analysis": "No or-clause after a y/n question.", "was_identified": 0 },
+"20H": { "analysis": "Not a declarative-form question.", "was_identified": 0 },
+"20I": { "analysis": "No tag question.", "was_identified": 0 },
+"20J": { "analysis": "Not a rhetorical question.", "was_identified": 0 },
+"20K": { "analysis": "No directive/command.", "was_identified": 0 },
+"20L": { "analysis": "No open-option suggestion.", "was_identified": 0 },
+"20M": { "analysis": "No offer.", "was_identified": 0 },
+"20N": { "analysis": "No commit.", "was_identified": 0 },
+"20O": { "analysis": "Conventional opening (“Good morning”).", "was_identified": 1 },
+"20P": { "analysis": "Not a closing.", "was_identified": 0 },
+"20Q": { "analysis": "No explicit performative.", "was_identified": 0 },
+"20R": { "analysis": "No exclamation.", "was_identified": 0 },
+"20S": { "analysis": "No other forward function needed.", "was_identified": 0 },
+"20T": { "analysis": "No thanking.", "was_identified": 0 },
+"20U": { "analysis": "No you’re-welcome.", "was_identified": 0 },
+"20V": { "analysis": "No apology for action.", "was_identified": 0 },
+
+"21A": { "analysis": "No acceptance/agreement move.", "was_identified": 0 },
+"21B": { "analysis": "No partial accept.", "was_identified": 0 },
+"21C": { "analysis": "No “maybe/weak accept”.", "was_identified": 0 },
+"21D": { "analysis": "No partial reject.", "was_identified": 0 },
+"21E": { "analysis": "No reject/disagree.", "was_identified": 0 },
+"21F": { "analysis": "No hold before answer (the line asks the question).", "was_identified": 0 },
+"21G": { "analysis": "No signal of non-understanding.", "was_identified": 0 },
+"21H": { "analysis": "No mimic-based non-understanding.", "was_identified": 0 },
+"21I": { "analysis": "No backchannel/continuer here.", "was_identified": 0 },
+"21J": { "analysis": "No backchannel-in-question-form.", "was_identified": 0 },
+"21K": { "analysis": "No acknowledge-answer (no answer yet).", "was_identified": 0 },
+"21L": { "analysis": "No repeat-phrase mimic.", "was_identified": 0 },
+"21M": { "analysis": "No collaborative completion.", "was_identified": 0 },
+"21N": { "analysis": "No summarize/reformulate.", "was_identified": 0 },
+"21O": { "analysis": "No appreciation/assessment of other’s content.", "was_identified": 0 },
+"21P": { "analysis": "No sympathy token.", "was_identified": 0 },
+"21Q": { "analysis": "No downplayer.", "was_identified": 0 },
+"21R": { "analysis": "No correction of misspeaking.", "was_identified": 0 },
+
+"22A": { "analysis": "No explicit “yes/yeah/uh-huh”.", "was_identified": 0 },
+"22B": { "analysis": "No explicit “no/nope/uh-uh”.", "was_identified": 0 },
+"22C": { "analysis": "No affirmative non-yes answer.", "was_identified": 0 },
+"22D": { "analysis": "No negative non-no answer.", "was_identified": 0 },
+"22E": { "analysis": "No other answer like “I don’t know”.", "was_identified": 0 },
+"22F": { "analysis": "No dispreferred-answer preface.", "was_identified": 0 },
+"22G": { "analysis": "No yes-with-expansion in same unit.", "was_identified": 0 },
+"22H": { "analysis": "No no-with-expansion in same unit.", "was_identified": 0 },
+"22I": { "analysis": "No post-yes/no statement expansion (sd^e).", "was_identified": 0 },
+"22J": { "analysis": "No post-yes/no opinion expansion (sv^e).", "was_identified": 0 },
+"22K": { "analysis": "No generic expansion marker needed.", "was_identified": 0 }
+},
+"raw_transcript_text": "10,\"Good morning, this is [Your Name]'s personal assistant. How can I assist you today?, \nHi, my name is Jordan. I recently purchased one of your smart thermostats... [Step: 1] Good morning, Jordan! We greatly appreciate you taking the time to provide feedback...Could you please share more details about your experience?,\nSure, overall, I'm impressed...challenging due to the lack of detailed instructions. [Step: 2] Thank you for sharing that, Jordan. We're glad to hear you're enjoying the thermostat. I apologize...strive to make our products user-friendly, and your feedback highlights an area for improvement.,\n\""
+}
+
+Again, for each of the lines (instance of a speaker's words) in the transcript, you will produce this structure, and this list of jsons will be elements in an outer json list, which will be written later to a json file, so it should be valid json.
+
+Important Considerations:
+
+Focus Solely on the Current Sentence:  While the context of previous sentences is important for understanding the meaning, when detecting behaviors, focus specifically on the new sentence being analyzed. Do not revise past analysis based on new information unless the new sentence directly contradicts a previous assessment.
+Contextual Awareness: While analyzing individual sentences, keep the overall context of the conversation in mind. Some phrases might indicate a specific behavior in isolation but might indicate a different behavior when analyzed with context.
+Neutral Sentences:  Many sentences will be neutral and won't contain any of the listed behaviors. This is expected. Do not attempt to identify behaviors that are not explicitly present in the conversation.
+Continuous Operation: You will perform this analysis for each new sentence of the transcript indefinitely. Do not allow yourself to become distracted.
+
+Finally, This prompt's output is long. To not hit the character limit, I would please request that you only output your behavioral analysis json for one line of your cleaned transcript at a time. So, please perform the actions in this prompt to clean the transcript, classify the speakers, etc, and when you get to the part where you are generating the json, only generate the json for the first line of the transcript. Directly following the json, please output a line which says, "END OF JSON OUTPUT." Finally, as the very last part of your prompt, please indicate how many lines are in the cleaned transcript in total, by outputting: "Number of Lines in Cleaned Transcript in Total: [put number here]." After you output your response for the first json, I will then repeatedly request that you continue, and you will output a json for the next time each time I tell you to continue.
