@@ -217,33 +217,33 @@ Here are the behavioral codes for your reference which you will iterate through 
 18. SWBD-DAMSL — Communicative Status
 18A. % Uninterpretable (verbal noise / too truncated to classify)
 18B. x Non-verbal only (laughter, cough)
-18C. % -/ Abandoned/Turn-exit (cut-off marked as “-/”)
+18C. % -/ Abandoned/Turn-exit (cut-off marked as "-/")
 18D. t1 Self-talk (not directed to interlocutor)
 18E. t3 Third-party talk (to someone else in the room)
 
 19. SWBD-DAMSL — Information Level (orthogonal markers)
 19A. ^t Task-management (about managing the call/task)
-19B. ^c Communication-management (channel, audibility, “are you there?”)
+19B. ^c Communication-management (channel, audibility, "are you there?")
 
 20. SWBD-DAMSL — Forward Communicative Function
 20A. sd Statement—non-opinion (descriptive/personal facts)
 20B. sv Statement—opinion/viewpoint
 20C. qy Yes/No question
 20D. qw Wh-question
-20E. qo Open question (“How about you?”, “What do you think?”)
+20E. qo Open question ("How about you?", "What do you think?")
 20F. qr Or-question (A or B?)
 20G. qrr Or-clause appended to a prior question
 20H. ^d Declarative question (statement form, question force)
-20I. ^g Tag question (“…, right?”, “isn’t it?”)
+20I. ^g Tag question ("..., right?", "isn’t it?")
 20J. qh Rhetorical question (no answer sought)
 20K. ad Action-directive (commands/requests incl. polite questions that function as directives)
-20L. oo Open-option/suggestion (“we could … or …”)
+20L. oo Open-option/suggestion ("we could ... or ...")
 20M. co Offer (conditional on recipient’s acceptance)
 20N. cc Commit (speaker commits to a future act)
 20O. fp Conventional opening (greetings)
 20P. fc Conventional closing (leave-taking)
-20Q. fx Explicit performative (“I recommend…”, “You’re fired”)
-20R. fe Exclamation (“Ouch”, “Gosh”)
+20Q. fx Explicit performative ("I recommend...", "You’re fired")
+20R. fe Exclamation ("Ouch", "Gosh")
 20S. fo Other forward function (misc.)
 20T. ft Thanking
 20U. fw You’re-welcome
@@ -255,27 +255,27 @@ Here are the behavioral codes for your reference which you will iterate through 
 21C. am Maybe/weak acceptance
 21D. arp Reject-part (partial)
 21E. ar Reject/Disagree
-21F. ^h Hold before answer/agreement (“let me think…”)
-21G. br Signal non-understanding (“pardon?”, “what?”)
-21H. br^m Non-understanding via mimic (“you did what?”)
-21I. b Acknowledge/Backchannel (“uh-huh”, “yeah”)
-21J. bh Backchannel in question form (“oh, really?”)
-21K. bk Acknowledge-answer (“oh, okay”, “I see”)
+21F. ^h Hold before answer/agreement ("let me think...")
+21G. br Signal non-understanding ("pardon?", "what?")
+21H. br^m Non-understanding via mimic ("you did what?")
+21I. b Acknowledge/Backchannel ("uh-huh", "yeah")
+21J. bh Backchannel in question form ("oh, really?")
+21K. bk Acknowledge-answer ("oh, okay", "I see")
 21L. ^m Repeat phrase / mimic other
 21M. ^2 Collaborative completion
-21N. bf Summarize/Reformulate other’s point (“so you mean…”)
-21O. ba Appreciation/Assessment (“that makes sense”, “nice”)
-21P. by Sympathy (“I’m sorry to hear that”)
-21Q. bd Downplayer (“that’s all right”, “no worries”)
+21N. bf Summarize/Reformulate other’s point ("so you mean...")
+21O. ba Appreciation/Assessment ("that makes sense", "nice")
+21P. by Sympathy ("I’m sorry to hear that")
+21Q. bd Downplayer ("that’s all right", "no worries")
 21R. bc Correct misspeaking by other
 
 22. SWBD-DAMSL — Answers & Expansions
-22A. ny Yes (literal “yes/yeah/uh-huh”)
-22B. nn No (literal “no/nope/uh-uh”)
-22C. na Affirmative non-yes answer (e.g., “I do”, “It is”)
-22D. ng Negative non-no answer (e.g., “I don’t”, “Not really”)
-22E. no Other answer (e.g., “I don’t know”)
-22F. nd Dispreferred answer preface (“well…”, hedged neg)
+22A. ny Yes (literal "yes/yeah/uh-huh")
+22B. nn No (literal "no/nope/uh-uh")
+22C. na Affirmative non-yes answer (e.g., "I do", "It is")
+22D. ng Negative non-no answer (e.g., "I don’t", "Not really")
+22E. no Other answer (e.g., "I don’t know")
+22F. nd Dispreferred answer preface ("well...", hedged neg)
 22G. ny^e Yes with expansion in same slash-unit
 22H. nn^e No with expansion in same slash-unit
 22I. sd^e Statement expanding a y/n answer (first post-answer unit)
@@ -303,16 +303,16 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "transcript_segment": "Good morning, this is [Your Name]'s personal assistant. How can I assist you today?",
 "speaker": "Receiver",
 "behaviors_exhibited": {
-"1A": { "analysis": "Provides identity (“this is … personal assistant”).", "was_identified": 1 },
-"1B": { "analysis": "Requests information (“How can I assist you today?”).", "was_identified": 1 },
+"1A": { "analysis": "Provides identity ("this is ... personal assistant").", "was_identified": 1 },
+"1B": { "analysis": "Requests information ("How can I assist you today?").", "was_identified": 1 },
 
 "2A": { "analysis": "Identity claim presented as fact.", "was_identified": 1 },
 "2B": { "analysis": "No desire/preference expressed.", "was_identified": 0 },
-"2C": { "analysis": "No opinion/belief phrasing (e.g., “I think”).", "was_identified": 0 },
+"2C": { "analysis": "No opinion/belief phrasing (e.g., "I think").", "was_identified": 0 },
 "2D": { "analysis": "No real-time observation asserted.", "was_identified": 0 },
 "2E": { "analysis": "No hypothesis/prediction.", "was_identified": 0 },
 
-"3A": { "analysis": "High-certainty assertion (“this is …”).", "was_identified": 1 },
+"3A": { "analysis": "High-certainty assertion ("this is ...").", "was_identified": 1 },
 "3B": { "analysis": "No hedging/conditionality.", "was_identified": 0 },
 "3C": { "analysis": "No suppositional framing.", "was_identified": 0 },
 "3D": { "analysis": "Certainty relevant here; not N/A.", "was_identified": 0 },
@@ -335,7 +335,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "6C": { "analysis": "No pre-justification.", "was_identified": 0 },
 "6D": { "analysis": "No explicit benefit/cost judgment.", "was_identified": 0 },
 "6E": { "analysis": "No restatement/rephrasing.", "was_identified": 0 },
-"6F": { "analysis": "Phatic greeting (“Good morning”) = non-informational acknowledgement.", "was_identified": 1 },
+"6F": { "analysis": "Phatic greeting ("Good morning") = non-informational acknowledgement.", "was_identified": 1 },
 "6G": { "analysis": "First line; no prior utterance to relate to.", "was_identified": 0 },
 "6H": { "analysis": "Not a topic shift away from prior content (line starts the call).", "was_identified": 0 },
 
@@ -346,13 +346,13 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "7E": { "analysis": "Valence applicable (positive).", "was_identified": 0 },
 
 "8A": { "analysis": "No yes/no choice asked or answered.", "was_identified": 0 },
-"8B": { "analysis": "Affirmative state description (“this is …”).", "was_identified": 1 },
+"8B": { "analysis": "Affirmative state description ("this is ...").", "was_identified": 1 },
 "8C": { "analysis": "No negative choice/answer.", "was_identified": 0 },
 "8D": { "analysis": "No negative-state description.", "was_identified": 0 },
 "8E": { "analysis": "No restricted-set choice.", "was_identified": 0 },
 "8F": { "analysis": "No defined-set selection.", "was_identified": 0 },
 "8G": { "analysis": "No defined-set non-choice attribute.", "was_identified": 0 },
-"8H": { "analysis": "Open-ended request for needs (“How can I assist…?”).", "was_identified": 1 },
+"8H": { "analysis": "Open-ended request for needs ("How can I assist...?").", "was_identified": 1 },
 "8I": { "analysis": "No open-ended non-choice description.", "was_identified": 0 },
 
 "9A": { "analysis": "Not about prior utterance.", "was_identified": 0 },
@@ -375,7 +375,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "10D": { "analysis": "No sensitive data given.", "was_identified": 0 },
 "10E": { "analysis": "Unused/unspecified subtype in this taxonomy.", "was_identified": 0 },
 
-"12A": { "analysis": "Asks about needs (“How can I assist…?”).", "was_identified": 1 },
+"12A": { "analysis": "Asks about needs ("How can I assist...?").", "was_identified": 1 },
 "12B": { "analysis": "No deadline stated.", "was_identified": 0 },
 "12C": { "analysis": "No harmful consequence threatened.", "was_identified": 0 },
 "12D": { "analysis": "No promised beneficial consequence.", "was_identified": 0 },
@@ -409,32 +409,32 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "15F": { "analysis": "No explicit justification for a request.", "was_identified": 0 },
 "15G": { "analysis": "No account/event sequence details.", "was_identified": 0 },
 
-"16A": { "analysis": "Common nouns: “morning”, “assistant”.", "was_identified": 1 },
-"16B": { "analysis": "Proper noun placeholder: “[Your Name]”.", "was_identified": 1 },
+"16A": { "analysis": "Common nouns: "morning", "assistant".", "was_identified": 1 },
+"16B": { "analysis": "Proper noun placeholder: "[Your Name]".", "was_identified": 1 },
 "16C": { "analysis": "No abstract noun.", "was_identified": 0 },
-"16D": { "analysis": "Concrete referent “assistant”.", "was_identified": 1 },
+"16D": { "analysis": "Concrete referent "assistant".", "was_identified": 1 },
 "16E": { "analysis": "No collective noun.", "was_identified": 0 },
-"16F": { "analysis": "Personal pronouns: “I”, “you”.", "was_identified": 1 },
-"16G": { "analysis": "No possessive pronoun (note: “your” is adjective).", "was_identified": 0 },
+"16F": { "analysis": "Personal pronouns: "I", "you".", "was_identified": 1 },
+"16G": { "analysis": "No possessive pronoun (note: "your" is adjective).", "was_identified": 0 },
 "16H": { "analysis": "No reflexive pronoun.", "was_identified": 0 },
-"16I": { "analysis": "Demonstrative pronoun: “this”.", "was_identified": 1 },
+"16I": { "analysis": "Demonstrative pronoun: "this".", "was_identified": 1 },
 "16J": { "analysis": "No interrogative pronoun (what/who/which).", "was_identified": 0 },
 "16K": { "analysis": "No relative pronoun.", "was_identified": 0 },
 "16L": { "analysis": "No indefinite pronoun.", "was_identified": 0 },
-"16M": { "analysis": "Action verb: “assist”.", "was_identified": 1 },
-"16N": { "analysis": "Linking verb: “is”.", "was_identified": 1 },
-"16O": { "analysis": "Modal/auxiliary: “can”.", "was_identified": 1 },
-"16P": { "analysis": "Transitive usage: “assist you”.", "was_identified": 1 },
+"16M": { "analysis": "Action verb: "assist".", "was_identified": 1 },
+"16N": { "analysis": "Linking verb: "is".", "was_identified": 1 },
+"16O": { "analysis": "Modal/auxiliary: "can".", "was_identified": 1 },
+"16P": { "analysis": "Transitive usage: "assist you".", "was_identified": 1 },
 "16Q": { "analysis": "No intransitive verb evident.", "was_identified": 0 },
-"16R": { "analysis": "Descriptive adjective: “personal”.", "was_identified": 1 },
+"16R": { "analysis": "Descriptive adjective: "personal".", "was_identified": 1 },
 "16S": { "analysis": "No quantitative adjective.", "was_identified": 0 },
-"16T": { "analysis": "No demonstrative adjective (here “this” is pronoun).", "was_identified": 0 },
-"16U": { "analysis": "Possessive adjective: “your”.", "was_identified": 1 },
+"16T": { "analysis": "No demonstrative adjective (here "this" is pronoun).", "was_identified": 0 },
+"16U": { "analysis": "Possessive adjective: "your".", "was_identified": 1 },
 "16V": { "analysis": "No interrogative adjective.", "was_identified": 0 },
 "16W": { "analysis": "No comparative adjective.", "was_identified": 0 },
 "16X": { "analysis": "No superlative adjective.", "was_identified": 0 },
 "16Y": { "analysis": "No adverb of manner.", "was_identified": 0 },
-"16Z": { "analysis": "Adverb of time: “today”.", "was_identified": 1 },
+"16Z": { "analysis": "Adverb of time: "today".", "was_identified": 1 },
 "16AA": { "analysis": "No adverb of place.", "was_identified": 0 },
 "16AB": { "analysis": "No adverb of frequency.", "was_identified": 0 },
 "16AC": { "analysis": "No degree adverb.", "was_identified": 0 },
@@ -444,10 +444,10 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "16AG": { "analysis": "No coordinating conjunction.", "was_identified": 0 },
 "16AH": { "analysis": "No subordinating conjunction.", "was_identified": 0 },
 "16AI": { "analysis": "No correlative conjunction.", "was_identified": 0 },
-"16AJ": { "analysis": "No primary interjection (“oh/hey”).", "was_identified": 0 },
+"16AJ": { "analysis": "No primary interjection ("oh/hey").", "was_identified": 0 },
 "16AK": { "analysis": "No secondary interjection.", "was_identified": 0 },
 
-"17A": { "analysis": "Present Simple: “this is …”.", "was_identified": 1 },
+"17A": { "analysis": "Present Simple: "this is ...".", "was_identified": 1 },
 "17B": { "analysis": "Present Progressive not used.", "was_identified": 0 },
 "17C": { "analysis": "Present Perfect not used.", "was_identified": 0 },
 "17D": { "analysis": "Present Perfect Progressive not used.", "was_identified": 0 },
@@ -459,7 +459,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "17J": { "analysis": "Future Progressive not used.", "was_identified": 0 },
 "17K": { "analysis": "Future Perfect not used.", "was_identified": 0 },
 "17L": { "analysis": "Future Perfect Progressive not used.", "was_identified": 0 },
-"17M": { "analysis": "Modal present: “can assist”.", "was_identified": 1 },
+"17M": { "analysis": "Modal present: "can assist".", "was_identified": 1 },
 "17N": { "analysis": "Modal past forms (could/might/would/should) not used.", "was_identified": 0 },
 
 "18A": { "analysis": "Utterance is interpretable.", "was_identified": 0 },
@@ -471,11 +471,11 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "19A": { "analysis": "Not managing task/topic logistics.", "was_identified": 0 },
 "19B": { "analysis": "Not addressing channel/audibility.", "was_identified": 0 },
 
-"20A": { "analysis": "Statement—non-opinion (“this is …”).", "was_identified": 1 },
+"20A": { "analysis": "Statement—non-opinion ("this is ...").", "was_identified": 1 },
 "20B": { "analysis": "No opinion/viewpoint offered.", "was_identified": 0 },
 "20C": { "analysis": "No yes/no question.", "was_identified": 0 },
 "20D": { "analysis": "No wh-question.", "was_identified": 0 },
-"20E": { "analysis": "Open question (“How can I assist…?”).", "was_identified": 1 },
+"20E": { "analysis": "Open question ("How can I assist...?").", "was_identified": 1 },
 "20F": { "analysis": "No or-question.", "was_identified": 0 },
 "20G": { "analysis": "No or-clause after a y/n question.", "was_identified": 0 },
 "20H": { "analysis": "Not a declarative-form question.", "was_identified": 0 },
@@ -485,7 +485,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "20L": { "analysis": "No open-option suggestion.", "was_identified": 0 },
 "20M": { "analysis": "No offer.", "was_identified": 0 },
 "20N": { "analysis": "No commit.", "was_identified": 0 },
-"20O": { "analysis": "Conventional opening (“Good morning”).", "was_identified": 1 },
+"20O": { "analysis": "Conventional opening ("Good morning").", "was_identified": 1 },
 "20P": { "analysis": "Not a closing.", "was_identified": 0 },
 "20Q": { "analysis": "No explicit performative.", "was_identified": 0 },
 "20R": { "analysis": "No exclamation.", "was_identified": 0 },
@@ -496,7 +496,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 
 "21A": { "analysis": "No acceptance/agreement move.", "was_identified": 0 },
 "21B": { "analysis": "No partial accept.", "was_identified": 0 },
-"21C": { "analysis": "No “maybe/weak accept”.", "was_identified": 0 },
+"21C": { "analysis": "No "maybe/weak accept".", "was_identified": 0 },
 "21D": { "analysis": "No partial reject.", "was_identified": 0 },
 "21E": { "analysis": "No reject/disagree.", "was_identified": 0 },
 "21F": { "analysis": "No hold before answer (the line asks the question).", "was_identified": 0 },
@@ -513,11 +513,11 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "21Q": { "analysis": "No downplayer.", "was_identified": 0 },
 "21R": { "analysis": "No correction of misspeaking.", "was_identified": 0 },
 
-"22A": { "analysis": "No explicit “yes/yeah/uh-huh”.", "was_identified": 0 },
-"22B": { "analysis": "No explicit “no/nope/uh-uh”.", "was_identified": 0 },
+"22A": { "analysis": "No explicit "yes/yeah/uh-huh".", "was_identified": 0 },
+"22B": { "analysis": "No explicit "no/nope/uh-uh".", "was_identified": 0 },
 "22C": { "analysis": "No affirmative non-yes answer.", "was_identified": 0 },
 "22D": { "analysis": "No negative non-no answer.", "was_identified": 0 },
-"22E": { "analysis": "No other answer like “I don’t know”.", "was_identified": 0 },
+"22E": { "analysis": "No other answer like "I don’t know".", "was_identified": 0 },
 "22F": { "analysis": "No dispreferred-answer preface.", "was_identified": 0 },
 "22G": { "analysis": "No yes-with-expansion in same unit.", "was_identified": 0 },
 "22H": { "analysis": "No no-with-expansion in same unit.", "was_identified": 0 },
