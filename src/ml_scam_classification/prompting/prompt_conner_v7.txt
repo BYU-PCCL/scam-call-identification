@@ -294,7 +294,7 @@ The value of attribute "analysis" will be comments on whether or not the behavio
 Reminder that this object is again, the value of the attribute whose id is the id for the specific behavior under evaluation for its presence in the current segment. 
 The second attribute of this object is "was_identified" which indicates whether or not the behavior was identfieid in the call transcript segment under consideration, and its value is 1 if it was identified as present and 0 if it was determined that it was not present in the segment. 
 
-Lastly, the json (for each segment of the speaker-annotated transcript) will have a final attribute which contains the full transcript text pasted as attribute "raw_transcript_text" for reference, which allows each segment's json to be explicitly connected to a full raw source transcript. 
+Lastly, the json (for each segment of the speaker-annotated transcript) will have a final attribute which contains the first 4 sentences of the full transcript text pasted as attribute "first_4_sentences_raw_transcript" for reference, which allows each segment's json to be explicitly connected to a raw source transcript. 
 Make sure to escape any quotes to maintain valid json that can be used as json.
 
 So for each line of the annotated transcript (for each instance of a speaker), you will construct the following json:
@@ -525,7 +525,7 @@ So for each line of the annotated transcript (for each instance of a speaker), y
 "22J": { "analysis": "No post-yes/no opinion expansion (sv^e).", "was_identified": 0 },
 "22K": { "analysis": "No generic expansion marker needed.", "was_identified": 0 }
 },
-"raw_transcript_text": "10,\"Good morning, this is [Your Name]'s personal assistant. How can I assist you today?, \nHi, my name is Jordan. I recently purchased one of your smart thermostats... [Step: 1] Good morning, Jordan! We greatly appreciate you taking the time to provide feedback...Could you please share more details about your experience?,\nSure, overall, I'm impressed...challenging due to the lack of detailed instructions. [Step: 2] Thank you for sharing that, Jordan. We're glad to hear you're enjoying the thermostat. I apologize...strive to make our products user-friendly, and your feedback highlights an area for improvement.,\n\""
+"first_4_sentences_raw_transcript": "10,\"Good morning, this is [Your Name]'s personal assistant. How can I assist you today?, \nHi, my name is Jordan. I recently purchased one of your smart thermostats... 
 }
 
 Again, for each of the lines (instance of a speaker's words) in the transcript, you will produce this structure, and this list of jsons will be elements in an outer json list, which will be written later to a json file, so it should be valid json.
