@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # SETTINGS
     PROMPT_FOLDER_LOCATION = "src/ml_scam_classification/prompting"
     VERSION_TO_USE = 3
-    SELECTED_PROMPT_PATH = "src/ml_scam_classification/prompting/prompt_conner_v3.txt"
+    SELECTED_PROMPT_PATH = "src/ml_scam_classification/prompting/prompt_conner_v7.txt"
 
     ######## MASTER SETTINGS - careful when adjusting these as they may have filesystem implications
     PROMPT_FILE_ID_SUBSTR = "prompt" # Assuming all prompt files contain kw: "prompt" somewhere in filename
@@ -79,13 +79,13 @@ if __name__ == "__main__":
     if n_args == 1:
         run_gemini_behavioral_analysis(
             prompt_filepath=SELECTED_PROMPT_PATH,
-            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out_v3.txt"
+            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out_v7.txt"
             )
     elif n_args == 2:
         run_gemini_behavioral_analysis(sys.argv[1])
         run_gemini_behavioral_analysis(
             prompt_filepath=sys.argv[1],
-            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out_v3.txt"
+            response_writepath=f"src/ml_scam_classification/outputs/{time.time_ns()}__feature_extraction_out_v7.txt"
             )
     elif n_args == 3:
         run_gemini_behavioral_analysis(sys.argv[1], sys.argv[2])
