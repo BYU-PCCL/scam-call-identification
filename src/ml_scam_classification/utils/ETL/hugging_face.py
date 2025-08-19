@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import os
+import pandas as pd
 from pathlib import Path
 from typing import Optional, Union, Dict
 
-import pandas as pd
-from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset, IterableDataset
-
+from datasets import (
+    load_dataset,
+    get_dataset_split_names,
+    DatasetDict,
+    Dataset,
+    IterableDataset,
+    concatenate_datasets,
+)
 
 def get_dataset_from_huggingface(
     dataset_name: str,
@@ -108,86 +114,95 @@ def get_store_HF_ds_all_splits(
 ) -> pd.DataFrame:
     """
     Load all splits from HuggingFace, merge them, write a single CSV, and return the DataFrame.
-
-    Efficiency strategy
-    -------------------
-    - If `streaming=False` (default):
-        * Load DatasetDict
-        * Add 'split' column (optional)
-        * Arrow-concat, then `to_pandas()` once, then write CSV
-    - If `streaming=True`:
-        * Requires `split_expr` like "train+test+validation"
-        * Streams rows to CSV without holding everything in memory
-        * Also returns a DataFrame (note: this materializes the data; omit if huge)
-
-    Parameters
-    ----------
-    dataset_name : str
-        HuggingFace dataset path.
-    out_csv_path : str
-        Destination CSV path. Parent directories are created if needed.
-    add_split_column : bool, default True
-        Include a 'split' provenance column when possible.
-    streaming : bool, default False
-        Use IterableDataset streaming mode. Requires `split_expr`.
-    split_expr : Optional[str], default None
-        Split expression (e.g., "train+test+validation"). Required if `streaming=True`.
-    **load_kwargs
-        Forwarded to `load_dataset`.
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame containing all splits (note: can be large).
+    - If streaming=False: Arrow-concat then convert once (fastest in-memory path).
+    - If streaming=True:
+        * If split_expr is given: stream the union (no split provenance).
+        * If split_expr is None: auto-detect splits, stream each split individually,
+          add 'split' column, and write incrementally.
     """
     out_path = Path(out_csv_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     if streaming:
-        if not split_expr:
-            raise ValueError("When streaming=True, you must provide split_expr (e.g., 'train+test+validation').")
-
-        # Stream rows and write incrementally to CSV
-        streamed = get_dataset_from_huggingface(
-            dataset_name,
-            split=split_expr,
-            streaming=True,
-            **load_kwargs
-        )
-
         import csv
+
+        # If user provided split_expr, stream union (no per-row split available)
+        if split_expr:
+            streamed = load_dataset(
+                dataset_name, split=split_expr, streaming=True, **load_kwargs
+            )
+            header_written = False
+            with out_path.open("w", newline="", encoding="utf-8") as f:
+                writer = None
+                for row in streamed:
+                    if not header_written:
+                        columns = list(row.keys())
+                        if add_split_column and "split" not in columns:
+                            columns.append("split")  # won't have correct values here
+                        writer = csv.DictWriter(f, fieldnames=columns)
+                        writer.writeheader()
+                        header_written = True
+                    # We cannot know the original split in a union expression.
+                    if add_split_column:
+                        row = dict(row)
+                        row.setdefault("split", "unknown")
+                    writer.writerow(row)
+
+            # Return a DataFrame (materializes); skip if file is huge
+            return pd.read_csv(out_path)
+
+        # No split_expr: discover splits, then stream per split to preserve provenance
+        discovered_splits = get_dataset_split_names(dataset_name, **load_kwargs)
         header_written = False
         columns = None
+
         with out_path.open("w", newline="", encoding="utf-8") as f:
             writer = None
-            for row in streamed:
-                # Add split provenance if possible — not available in streaming union.
-                # You can compute provenance only if you iterate split-by-split separately.
-                if not header_written:
-                    columns = list(row.keys())
-                    writer = csv.DictWriter(f, fieldnames=columns)
-                    writer.writeheader()
-                    header_written = True
-                writer.writerow(row)
+            for sp in discovered_splits:
+                it = load_dataset(
+                    dataset_name, split=sp, streaming=True, **load_kwargs
+                )
+                for row in it:
+                    if not header_written:
+                        columns = list(row.keys())
+                        if add_split_column and "split" not in columns:
+                            columns.append("split")
+                        writer = csv.DictWriter(f, fieldnames=columns)
+                        writer.writeheader()
+                        header_written = True
 
-        # If you still want a DataFrame, read back (this loads all into memory).
-        df_all = pd.read_csv(out_path)
-        return df_all
+                    if add_split_column:
+                        row = dict(row)
+                        row["split"] = sp
+                    writer.writerow(row)
 
-    # Non-streaming: load all splits, concat at Arrow level, convert once
-    ds = get_dataset_from_huggingface(dataset_name, **load_kwargs)  # DatasetDict expected
-    if not isinstance(ds, DatasetDict):
-        # If the dataset truly has only one split, it might already be a Dataset
-        df_all = get_all_HF_ds_splits_as_df(ds, add_split_column=add_split_column)
+        return pd.read_csv(out_path)
+
+    # -------- Non-streaming path (fastest if it fits in RAM) --------
+    ds = load_dataset(dataset_name, **load_kwargs)  # usually a DatasetDict
+    if isinstance(ds, DatasetDict):
+        parts = []
+        for split_name, d in ds.items():
+            parts.append(d.add_column("split", [split_name] * len(d)) if add_split_column else d)
+        all_d = concatenate_datasets(parts) if len(parts) > 1 else parts[0]
+        df_all = all_d.to_pandas()
         df_all.to_csv(out_path, index=False)
         return df_all
 
-    # Build Arrow pieces with optional split column
-    parts = []
-    for split_name, d in ds.items():
-        parts.append(d.add_column("split", [split_name] * len(d)) if add_split_column else d)
+    if isinstance(ds, Dataset):
+        df_all = ds.to_pandas()
+        if add_split_column and "split" not in df_all.columns:
+            df_all["split"] = "unknown"
+        df_all.to_csv(out_path, index=False)
+        return df_all
 
-    all_d = concatenate_datasets(parts) if len(parts) > 1 else parts[0]
-    df_all = all_d.to_pandas()
-    df_all.to_csv(out_path, index=False)
-    return df_all
+    if isinstance(ds, IterableDataset):
+        # Extremely uncommon here because streaming=False, but handle gracefully.
+        rows = list(ds)
+        df_all = pd.DataFrame(rows)
+        if add_split_column and "split" not in df_all.columns:
+            df_all["split"] = "unknown"
+        df_all.to_csv(out_path, index=False)
+        return df_all
+
+    raise TypeError(f"Unsupported dataset type: {type(ds)}")
