@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     #print_df_values(df_conversations)
     
-    output_file = 'src/ml_scam_classification/data/call_data_by_conversation/processed/call_data_by_conversation_conv_only.csv'
+    output_file = 'src/ml_scam_classification/data/call_data_by_conversation/processed/transcripts.csv'
 
     # create dirs along path
     make_dir_rec(output_file)
