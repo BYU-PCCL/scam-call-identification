@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     # Form dataframe where each instance is a transcript, save in IS transcripts save location
     df = pd.DataFrame({"Transcript": texts_of_iS_transcripts})
-    df.to_csv(iS_TRANSCRIPTS_EXTRACTED_DATA_SAVE_LOCATION)
+    df.to_csv(iS_TRANSCRIPTS_EXTRACTED_DATA_SAVE_LOCATION, index=False)
 
     # Check
     stored_df = pd.read_csv(iS_TRANSCRIPTS_EXTRACTED_DATA_SAVE_LOCATION)
