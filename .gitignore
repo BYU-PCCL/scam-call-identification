@@ -1,6 +1,7 @@
 **/__pycache__/
 .env
 outputs/**
+settings/**
 logs/**
 !outputs/.gitkeep
 src/ml_scam_classification/data/**
