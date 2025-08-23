@@ -43,3 +43,15 @@ def load_pkl(
         data = pickle.load(file)
 
     return data
+
+
+def overwrite_pkl(path: str, new_data) -> None:
+    """
+    Overwrites the contents of the pkl file at the given path with the inputted data
+    """
+    # make sure pkl exists, as we are overwriting it
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Attempted to overwrite .pkl file at non-existent path:\n{path}")
+
+    with open('data.pkl', 'wb') as file:
+        pickle.dump(new_data, file)
