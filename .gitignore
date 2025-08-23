@@ -1,7 +1,7 @@
 **/__pycache__/
 .env
 outputs/**
-outputs/**
+logs/**
 !outputs/.gitkeep
 src/ml_scam_classification/data/**
 build_image_docker_scams.sh
