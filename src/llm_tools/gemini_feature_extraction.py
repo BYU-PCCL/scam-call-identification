@@ -7,7 +7,7 @@ import pandas as pd
 from google import genai
 from google.genai import types
 from src.ml_scam_classification.utils.file_utils import get_gemini_api_key, ensure_file_versioning_ok
-from src.ml_scam_classification.utils.llm_utils import get_json_from_llm_response
+from src.llm_tools.llm_utils import get_json_from_llm_response
 
 def run_gemini_behavioral_analysis(
     prompt_filepath=None, 

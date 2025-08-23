@@ -4,7 +4,7 @@ import time
 from dotenv import load_dotenv
 from openai import OpenAI
 from src.ml_scam_classification.utils.file_utils import get_chatgpt_api_key
-from src.ml_scam_classification.utils.cout_log_utils import cout_log_info
+from src.llm_tools.debug_utils import cout_log_info
 
 def send_prompt_to_chatgpt(
     prompt, 

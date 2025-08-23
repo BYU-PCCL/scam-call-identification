@@ -1,13 +1,13 @@
 import os
 import pandas as pd
 
-from src.ml_scam_classification.utils.cout_log_utils import (
+from src.llm_tools.debug_utils import (
     cout_log,
     cout_log_info
 )
 from src.ml_scam_classification.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
 
-from src.ml_scam_classification.utils.chatgpt_utils import start_conversation, continue_conversation
+from src.llm_tools.chatgpt_utils import start_conversation, continue_conversation
 
 import sys
 import os
@@ -15,15 +15,14 @@ import time
 import pandas as pd
 from src.ml_scam_classification.utils.file_utils import read_file
 from src.ml_scam_classification.utils.json_utils import is_json, convert_list_json_str_to_json_list, write_json_to_file
-from src.ml_scam_classification.utils.chatgpt_utils import (
+from src.llm_tools.chatgpt_utils import (
     start_conversation,
     continue_conversation,
     build_progress_message,
-    get_response_from_chatgpt,
-    extract_json_from_response,
+    get_response_from_chatgpt_conversation,
     estimate_remaining_lines
 )
-from src.ml_scam_classification.utils.llm_utils import get_json_from_llm_response
+from src.llm_tools.llm_utils import get_json_from_llm_response
 
 # -- Data Loading and Filename Generation --
 
@@ -68,8 +67,8 @@ def process_transcript_into_behaviors_json(
     print("Started initial request via ChatGPT conversation.")
     
     # Get the first response from ChatGPT and extract the JSON
-    response = get_response_from_chatgpt(conversation)
-    json_parts = [extract_json_from_response(response)]
+    response = get_response_from_chatgpt_conversation(conversation)
+    json_parts = [get_json_from_llm_response(response)]
     
     # Estimate num additional responses required
     # The prompt instructions may or may not ask for the num of lines, if it doesn't, it will estimate
@@ -84,14 +83,14 @@ def process_transcript_into_behaviors_json(
 
         # get behaviors from each remaining line with separate prompt for each line (to avoid token limit)
         conversation = continue_conversation(conversation, cont_prompt, model, progress_message=progress_msg)
-        response = get_response_from_chatgpt(conversation)
+        response = get_response_from_chatgpt_conversation(conversation)
 
         # If no response returned, exit
         if not response.strip():
             break
 
         # get behavior jsons from chatgpt response
-        current_json = extract_json_from_response(response)
+        current_json = get_json_from_llm_response(response)
         if not is_json(current_json):
             raise ValueError("Extracted content is not valid JSON.")
         json_parts.append(current_json)

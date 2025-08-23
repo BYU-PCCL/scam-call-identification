@@ -1,5 +1,5 @@
 import argparse
-from src.ml_scam_classification.utils.file_utils import parquet_to_audio
+from src.ml_scam_classification.utils.file_models import parquet_to_audio
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

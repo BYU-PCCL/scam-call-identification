@@ -1,6 +1,8 @@
 **/__pycache__/
 .env
-src/ml_scam_classification/outputs/**
+outputs/**
+outputs/**
+!outputs/.gitkeep
 src/ml_scam_classification/data/**
 build_image_docker_scams.sh
 Dockerfile
