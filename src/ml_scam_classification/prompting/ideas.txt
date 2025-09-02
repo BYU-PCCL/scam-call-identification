@@ -1,0 +1,1 @@
+- asking for info that will enable a future action e.g. "I will need your zip code / address before I can deliver your order"
