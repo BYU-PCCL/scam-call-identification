@@ -6,6 +6,12 @@ Activating Environment (Windows):
 .\<env-name>\Scripts\activate
 
 _______________________
+|     INSTALL DEPS     |
+-----------------------
+
+pip install -r requirements.txt
+
+_______________________
 |   RUNNING Scripts   |
 -----------------------
 

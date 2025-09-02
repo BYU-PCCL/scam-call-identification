@@ -23,9 +23,6 @@ project_structure
 # Ignore these for now
 pyproject.toml
 
-# need to update
-requirements.txt
-
 # No need to share this
 TODO.txt
 
