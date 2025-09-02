@@ -13,7 +13,7 @@ if __name__ == "__main__":
     print_entries_pretty(
         path=None,
         df=df,
-        row_ranges=[(0,1),(1600,1601),(1669,1670),(1910,1911)],
+        row_ranges=[(0,1),(1600,1601),(1669,1670),(1910,1911),(1940,1941)],
         chars_per_row=80,
         space_padding=3,
         values_indentation=12,
