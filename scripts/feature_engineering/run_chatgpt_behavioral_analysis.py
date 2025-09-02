@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     ######## MASTER SETTINGS - careful when adjusting these as they may have filesystem implications
     PROMPT_FILE_ID_SUBSTR = "prompt"  # Assuming all prompt files contain kw: "prompt" somewhere in filename
-    FORCE_ACCEPT_NONMAX_VERSION = False  # Will prompt user to double-check if set to true
+    FORCE_ACCEPT_NONMAX_VERSION = False  # prompt user to double-check?
     RESPONSE_WRITEPATH = f"outputs/{time.time_ns()}__chatgpt__feat_out{VERSIONING_PREFIX}{str(VERSION_TO_USE)}.json"
 
     # Ensure output dir exists
