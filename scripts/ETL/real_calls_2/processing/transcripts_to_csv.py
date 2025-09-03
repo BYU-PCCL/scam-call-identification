@@ -3,7 +3,7 @@ import traceback
 import pandas as pd
 
 if __name__ == "__main__":
-    dir_w_my_transcripts = "src/ml_scam_classification/data/my_recorded_calls/raw/transcripts/"
+    dir_w_my_transcripts = "src/ml_scam_classification/data/real_calls_2/raw/transcripts/"
 
     paths_to_transcript_dirs = [os.path.join(dir_w_my_transcripts, dirname) for dirname in os.listdir(dir_w_my_transcripts) if str.isnumeric(dirname[:6])]
 
@@ -28,4 +28,4 @@ if __name__ == "__main__":
 
     df = pd.DataFrame({"transcripts": transcripts_txts})
     
-    df.to_csv("src/ml_scam_classification/data/my_recorded_calls/processed/transcripts_txts.csv")
+    df.to_csv("src/ml_scam_classification/data/real_calls_2/processed/transcripts_txts.csv")

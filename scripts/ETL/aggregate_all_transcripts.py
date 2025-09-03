@@ -25,7 +25,7 @@ class transcript_csv:
     source_youtube2: int
 
     def __init__(self, rel_path, scam_call_onehot, legitimate_call_onehot,
-                 source_internet_search=0, source_candor=0, source_youtube1=0, source_youtube2=0, source_my_recorded_calls=0):
+                 source_internet_search=0, source_candor=0, source_youtube1=0, source_youtube2=0, source_real_calls_2=0):
 
         # scam/legit validation
         s = scam_call_onehot if scam_call_onehot else not legitimate_call_onehot
@@ -34,7 +34,7 @@ class transcript_csv:
             raise ValueError("Attempted to instantiate transcript obj with non-0-or-1 passed onehot attribute value...")
 
         # source validation
-        srcs = [source_internet_search, source_candor, source_youtube1, source_youtube2, source_my_recorded_calls]
+        srcs = [source_internet_search, source_candor, source_youtube1, source_youtube2, source_real_calls_2]
         if not all(x in [0, 1] for x in srcs):
             raise ValueError("Source one-hot values must be 0 or 1.")
         if sum(srcs) != 1:
@@ -54,7 +54,7 @@ class transcript_csv:
         self.source_candor = source_candor
         self.source_youtube1 = source_youtube1
         self.source_youtube2 = source_youtube2
-        self.source_my_recorded_calls = source_my_recorded_calls
+        self.source_real_calls_2 = source_real_calls_2
 
 
 TRANSCRIPT_CSVs = [
@@ -83,10 +83,10 @@ TRANSCRIPT_CSVs = [
         source_youtube2=1
     ),
     transcript_csv(
-        rel_path="my_recorded_calls/processed/transcripts_txts.csv",
+        rel_path="real_calls_2/processed/transcripts_txts.csv",
         scam_call_onehot=0,
         legitimate_call_onehot=1,
-        source_my_recorded_calls=1
+        source_real_calls_2=1
     )
 ]
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         df['source_candor__onehot'] = t_csv.source_candor
         df['source_youtube1__onehot'] = t_csv.source_youtube1
         df['source_youtube2__onehot'] = t_csv.source_youtube2
-        df['source_myrecordedcalls__onehot'] = t_csv.source_my_recorded_calls
+        df['source_myrecordedcalls__onehot'] = t_csv.source_real_calls_2
 
         combined_df = pd.concat([combined_df, df], ignore_index=True)
 
