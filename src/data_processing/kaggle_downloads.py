@@ -99,23 +99,6 @@ def download_csv_from_kaggle(
         - Destination file already exists and `overwrite=False`.
     RuntimeError
         - Kaggle fetch failures, auth failures after retry, or inability to gather CSVs when required.
-
-    Examples
-    --------
-    >>> download_csv_from_kaggle(
-    ...     "https://www.kaggle.com/datasets/rivalcults/youtube-scam-phone-call-transcripts?select=FullTranscriptData.csv",
-    ...     "data/raw/youtube_scams",
-    ...     create_path=True
-    ... )
-    PosixPath('.../data/raw/youtube_scams/FullTranscriptData.csv')
-
-    >>> download_csv_from_kaggle(
-    ...     "https://www.kaggle.com/datasets/rivalcults/youtube-scam-phone-call-transcripts",
-    ...     "data/raw/youtube_scams_all",
-    ...     create_path=True,
-    ...     download_all_csvs=True
-    ... )
-    [PosixPath('.../FullTranscriptData.csv'), ...]
     """
 
     dataset_slug, selected_file = _parse_and_validate_kaggle_url(kaggle_url)
@@ -127,8 +110,6 @@ def download_csv_from_kaggle(
 
     if not save_dir_path.exists():
         if create_path:
-            # Use your helper to create parent dirs in a file-like path.
-            # We won't actually create this file; `make_dir_rec` should just ensure directories exist.
             placeholder = save_dir_path / "__placeholder__.csv"
             make_dir_rec(str(placeholder))
         else:
@@ -180,7 +161,6 @@ def _parse_and_validate_kaggle_url(url: str) -> Tuple[str, Optional[str]]:
         raise ValueError(f"URL must be under kaggle.com, got domain: {parsed.netloc}")
 
     # Path must start with /datasets/{owner}/{dataset}
-    # Accept optional /versions/{n} after that.
     path_parts = [p for p in parsed.path.split("/") if p]
     if len(path_parts) < 3 or path_parts[0] != "datasets":
         raise ValueError(
@@ -215,8 +195,6 @@ def _parse_and_validate_kaggle_url(url: str) -> Tuple[str, Optional[str]]:
 
 
 def _ensure_overwrite_policy(dest: Path, overwrite: bool, create_path: bool) -> None:
-    # Ensure parent directory exists if we're allowed to create it (already handled globally),
-    # but we also ensure per-file path via your helper to mirror prior usage pattern.
     if create_path and not dest.parent.exists():
         make_dir_rec(str(dest))
     if dest.exists() and not overwrite:
@@ -232,35 +210,74 @@ def _download_single_csv(
     interactive_auth_retry: bool,
 ) -> None:
     """
-    Prefer a file-level download when KaggleHub supports it; otherwise fall back to
-    loading via pandas and writing out (index=False) to preserve typical CSV shape.
+    Attempt direct file download; on a 404-like miss, fall back to downloading the entire dataset
+    and resolving by basename (case-insensitive). If multiple candidates exist, instruct the user
+    to specify the full relative path.
     """
-    # Try file-level download if available in this kagglehub version
-    if hasattr(kagglehub, "dataset_download_file"):
-        local_file = _with_auth_retry(
-            lambda: kagglehub.dataset_download_file(dataset_slug, rel_file_path),
-            interactive_auth_retry=interactive_auth_retry,
-        )
-        if not local_file or not Path(local_file).exists():
-            raise RuntimeError(
-                f"Downloaded file not found via KaggleHub: {local_file}"
+    # Try direct file-level download first (preferred)
+    try:
+        if hasattr(kagglehub, "dataset_download_file"):
+            local_file = _with_auth_retry(
+                lambda: kagglehub.dataset_download_file(dataset_slug, rel_file_path),
+                interactive_auth_retry=interactive_auth_retry,
             )
-        shutil.copy2(local_file, dest)
-        return
+            if not local_file or not Path(local_file).exists():
+                raise RuntimeError(f"Downloaded file not found via KaggleHub: {local_file}")
+            shutil.copy2(local_file, dest)
+            return
+        else:
+            # Fallback to pandas adapter if file-level helper missing
+            df = _with_auth_retry(
+                lambda: kagglehub.load_dataset(
+                    KaggleDatasetAdapter.PANDAS,
+                    dataset_slug,
+                    rel_file_path,
+                ),
+                interactive_auth_retry=interactive_auth_retry,
+            )
+            make_dir_rec(str(dest))
+            df.to_csv(dest, index=False)
+            return
+    except Exception as e:
+        # If it's not a "not found" type of error, bubble up
+        if not _is_not_found(e):
+            raise
 
-    # Fallback: use pandas adapter (may alter formatting minimally, but maintains data)
-    df = _with_auth_retry(
-        lambda: kagglehub.load_dataset(
-            KaggleDatasetAdapter.PANDAS,
-            dataset_slug,
-            rel_file_path,
-        ),
+    # Fallback: download full dataset and locate by basename
+    if not hasattr(kagglehub, "dataset_download"):
+        raise RuntimeError(
+            "File not found by direct path, and full-dataset download is unavailable in this kagglehub version. "
+            "Please provide the full relative path in ?select=..."
+        )
+
+    local_dir = _with_auth_retry(
+        lambda: kagglehub.dataset_download(dataset_slug),
         interactive_auth_retry=interactive_auth_retry,
     )
-    # Ensure parent dirs exist (your helper)
-    make_dir_rec(str(dest))
-    # Write without index to match typical Kaggle CSVs
-    df.to_csv(dest, index=False)
+    local_dir = Path(local_dir)
+    if not local_dir.exists():
+        raise RuntimeError(f"KaggleHub returned a non-existent path: {local_dir}")
+
+    target_name = Path(rel_file_path).name.lower()
+    matches = [p for p in local_dir.rglob("*") if p.is_file() and p.name.lower() == target_name]
+
+    if not matches:
+        csvs = sorted(p.relative_to(local_dir).as_posix() for p in local_dir.rglob("*.csv"))
+        preview = ", ".join(csvs[:20]) + (" …" if len(csvs) > 20 else "")
+        raise RuntimeError(
+            f"Selected file '{rel_file_path}' not found in dataset. "
+            f"Available CSVs include: {preview}. "
+            "Use one of these (with subdirectories) in ?select=…"
+        )
+
+    if len(matches) > 1:
+        rels = [m.relative_to(local_dir).as_posix() for m in matches]
+        raise RuntimeError(
+            "Multiple files share that basename. Please specify the full relative path in ?select=…\n"
+            f"Candidates: {rels}"
+        )
+
+    shutil.copy2(matches[0], dest)
 
 
 def _download_all_csvs(
@@ -293,8 +310,6 @@ def _download_all_csvs(
     saved_paths: List[Path] = []
     seen_names: set[str] = set()
     for src in csv_files:
-        # Prevent filename collisions when different subdirs share the same basename.
-        # If collision occurs and overwrite is False, raise an error.
         dest = save_dir / src.name
         if src.name in seen_names and not overwrite:
             raise FileExistsError(
@@ -323,9 +338,7 @@ def _with_auth_retry(func, interactive_auth_retry: bool):
                 try:
                     input("Set credentials, then press Enter to retry once...")
                 except EOFError:
-                    # Non-interactive context
                     pass
-                # Retry once
                 try:
                     return func()
                 except Exception as e2:
@@ -339,7 +352,6 @@ def _with_auth_retry(func, interactive_auth_retry: bool):
                 "Kaggle authentication required. Re-run with interactive_auth_retry=True "
                 "or set credentials and try again."
             ) from e
-        # Not an auth error → propagate as a general runtime error
         raise RuntimeError("Kaggle operation failed.") from e
 
 
@@ -347,13 +359,35 @@ def _looks_like_auth_error(exc: Exception) -> bool:
     """
     Heuristic detection since kagglehub exception classes can vary by version.
     """
-    msg = f"{type(exc).__name__}: {exc}".lower()
+    msg_chain = _exception_chain_text(exc)
     auth_markers = [
         "unauthorized", "forbidden", "401", "403",
         "credentials", "kaggle_username", "kaggle_key",
         "not authenticated", "authentication",
     ]
-    return any(m in msg for m in auth_markers)
+    return any(m in msg_chain for m in auth_markers)
+
+
+def _is_not_found(exc: Exception) -> bool:
+    """
+    Detects 404 / 'not found' errors even when wrapped by higher-level exceptions.
+    """
+    msg_chain = _exception_chain_text(exc)
+    return ("404" in msg_chain) or ("not found" in msg_chain)
+
+
+def _exception_chain_text(exc: Exception) -> str:
+    """
+    Collect lowercase text from an exception and its __cause__/__context__ chain.
+    """
+    parts = []
+    seen = set()
+    cur = exc
+    while cur and id(cur) not in seen:
+        parts.append(f"{type(cur).__name__}: {cur}")
+        seen.add(id(cur))
+        cur = getattr(cur, "__cause__", None) or getattr(cur, "__context__", None)
+    return " | ".join(p.lower() for p in parts)
 
 
 def _print_auth_help() -> None:
